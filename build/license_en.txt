@@ -1,0 +1,82 @@
+MIT License
+
+Copyright (c) 2018 Ming-Hung (Michael) Lu
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+
+
+S3Uploader Automatic Data Collection Supplement
+
+This Supplement serves to better inform our user on what usage data is automatically collected and how will they be used.
+
+In the following supplement, "collect" refers to sending to the developer(s), systems under the control of developer(s) or rhodiumcode.com or any third-party data processing service used by the developer(s).
+
+This Supplement is distributed as part of the License of S3Uploader (refers to as "Software"), by installing and using the Software, you acknowledge that you have read the following supplement.
+
+The Software DOES NOT automatically collect Personally Identifiable Information or your AWS data.
+
+(I.) DATA COLLECTED
+
+The data collected DOES NOT include any Personally Identifiable Information, as defined by US NIST, such as first and last name, email address or physical full address.
+
+The data also DOES NOT include your AWS data such as: file contents, AWS access keys, AWS account names etc.
+
+The data collected includes, but not limited to:
+
+    1. Actions performed in the Software, such as: opening of a particular dialog, navigating to a particular screen, clicking on a particular button. 
+    2. Duration of usage, such as: length of usage of the Software, length of usage of a particular feature within the software.
+    3. A randomly generated GUID (refer to as "GUID"), refer to (II.) for more detail.
+    4. Your anonymized IP address, for more details, visit https://support.google.com/analytics/answer/2763052?hl=en
+
+(II.) GUID FORMATION
+
+The GUID collected by the Software is a randomly generated Universally Unique Identifier (UUID) v4. It is generated upon first starting of the Software and stored on the user's system.
+
+The GUID is only used to differentiate different users but not associating any user with his or her true or any online identity.
+
+A sample of what the GUID looks like is provided as below:
+
+    25580a7b-5d11-413f-9bdb-93ef40c8d946
+
+This GUID may be changed by removing it from the Software's settings file and this GUID is not associated with any information the user enters during the usage of the Software, such as email address, private token to third-party service or other personal information.
+
+(III.) DATA TRANSMISSION
+
+The data may be transmitted to the developer(s) of the Software or any third-party data processing service used by the developer(s) of the Software.
+
+Currently, we use the following third-party data processing service:
+
+    Google Analytics
+
+(IV.) USE OF GOOGLE ANALYTICS
+
+The Software uses Google Analytics as it's data processing service provider.
+
+For Google Privacy Policy, provided as a reference, please see https://policies.google.com/privacy
+
+The Software DOES NOT use Google Advertising Features such as AdSense, AdWords.
+
+(V.) VOLUNTARY NATURE
+
+Your participation in automatic data collection is completely voluntary. You may opt-out at any time by using the Software's built-in menu. You are not required to opt-in for automatic data collection to use the Software.
+
+(VI.) DATA USAGE
+
+Unless otherwise noted, we may share the data collected with our partners to facilitate providing support, update or evaluation of the Software.
