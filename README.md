@@ -1,4 +1,3 @@
-# Codename Palladium
+# S3Uploader
 
-Something really in need of a good UI
-
+A minimalistic UI to conveniently upload and download files from AWS S3

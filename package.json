@@ -1,8 +1,8 @@
 {
-  "name": "palladium",
+  "name": "s3uploader",
   "version": "0.1.0",
   "description": "An UI for AWS S3",
-  "displayName": "Palladuim",
+  "displayName": "S3Uploader",
   "author": {
     "name": "Michael Lu",
     "email": "michaellu@rhodiumcode.com"
@@ -10,7 +10,7 @@
   "license": "SEE LICENSE IN LICENSE",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Yamazaki93/codename-palladium"
+    "url": "https://github.com/Yamazaki93/s3uploader"
   },
   "main": "./dist/main.js",
   "scripts": {
@@ -28,8 +28,8 @@
     "dist": "electron-builder --publish never"
   },
   "build": {
-    "appId": "com.rhodiumcode.palladium",
-    "productName": "Palladium",
+    "appId": "com.rhodiumcode.s3uploader",
+    "productName": "S3Uploader",
     "directories": {
       "buildResources": "build",
       "output": "dist-electron"
@@ -62,7 +62,7 @@
     "@types/uuid": "^3.4.4",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "electron": "2.0.5",
+    "electron": "2.0.8",
     "electron-chromedriver": "^3.0.0-beta.1",
     "mocha": "^5.2.0",
     "mocha-jenkins-reporter": "^0.4.1",

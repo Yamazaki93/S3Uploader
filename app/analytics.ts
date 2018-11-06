@@ -10,7 +10,7 @@ export class AnalyticsService {
     private clientID = "";
     private appVersion = "NA";
     private trackingID = "";
-    private appName = "Palladium";
+    private appName = "S3Uploader";
     constructor( version: string, tid: string) {
         this.appVersion = version;
         this.trackingID = tid;
@@ -56,7 +56,7 @@ export class AnalyticsService {
     public screenView(screenName: string) {
         if (this.analytics && this.trackingID) {
             // tslint:disable-next-line:max-line-length
-            this.analytics.screen(this.appName, this.appVersion, 'com.rohdiumcode.palladium', 'com.rhodiumcode.palladium', screenName);
+            this.analytics.screen(this.appName, this.appVersion, 'com.rohdiumcode.s3uploader', 'com.rhodiumcode.s3uploader', screenName);
         }
     }
 

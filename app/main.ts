@@ -12,7 +12,7 @@ import { UpdaterService } from "./updater";
 import { AnalyticsService } from "./analytics";
 
 let homeDir = os.homedir();
-let appDir = homeDir + "/Palladium/";
+let appDir = homeDir + "/S3Uploder/";
 import {GlobalEnv} from './environments/environment';
 
 let mainWindow: Electron.BrowserWindow;

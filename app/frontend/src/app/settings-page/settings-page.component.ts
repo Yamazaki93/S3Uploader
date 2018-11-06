@@ -97,7 +97,7 @@ export class SettingsPageComponent extends SubscriptionComponent implements OnIn
     this.electron.send('Application-OpenSecondary', {address: '../app/frontend/dist/data.html'});
   }
   openIssuesPage() {
-    this.electron.send('Application-OpenExternal', {address: 'https://github.com/Yamazaki93/codename-palladium'})
+    this.electron.send('Application-OpenExternal', {address: 'https://github.com/Yamazaki93/s3uploader'})
   }
   openBMC() {
     this.electron.send('Application-OpenExternal', { address: "https://www.buymeacoffee.com/mjCsGWDTS" });
