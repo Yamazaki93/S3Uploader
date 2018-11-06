@@ -1,0 +1,41 @@
+<div class="screen-container d-flex justify-content-center align-items-center">
+  <div class="card-container">
+    <div class="card text-center" style="width: 70rem;">
+      <div class="card-body smooth">
+        <h2 class="card-title">Add AWS Account</h2>
+        <div class="close-container">
+          <a class="close-btn" (click)="close()">
+            <i class="ion-ios-close"></i>
+          </a>
+        </div>
+        <form class="text-left" name="createForm">
+          <div class="row">
+            <div class="col-12">
+              <div class="from-group" [class.has-success]="!loading && tested && valid" [class.has-danger]="!loading && tested && !valid">
+                <input type="text" name="account-name" class="form-control form-control-alternative" [class.is-valid]="!loading && tested && valid"
+                  [class.is-invalid]="!loading && tested && !valid" placeholder="Account Name" [(ngModel)]="name"
+                  (input)="onTextChange()">
+                <div class="valid-feedback">
+                  Credential found
+                </div>
+                <div class="invalid-feedback">
+                  Credential not found
+                </div>
+                <small class="form-text text-muted">Enter a name that matches one of the access key section headings in
+                  your .aws credential file. To learn more about AWS credentials and how to set it up, click <a href="javascript:void(0)"
+                    (click)="openCredentialHelp()">here</a></small>
+              </div>
+            </div>
+          </div>
+        </form>
+        <div *ngIf="!loading && !valid" @ngIfAnimation>
+          <button id="test-btn" class="btn btn-info" [class.disabled]="name === ''" (click)="testAccount()">Find Credential</button>
+        </div>
+        <div *ngIf="!loading && valid && tested" @ngIfAnimation id="add-account-container">
+          <button id="add-account-btn" class="btn btn-info" (click)="addAccount()">Add Account</button>
+        </div>
+        <app-spinner *ngIf="loading" @ngIfAnimation></app-spinner>
+      </div>
+    </div>
+  </div>
+</div>

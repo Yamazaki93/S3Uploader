@@ -1,0 +1,41 @@
+<div class="page-container">
+  <div class="side-header-container left">
+    <div class="settings-icon" id="back-btn" (click)="goToHome()">
+      <i class="ion-ios-arrow-round-back"></i>
+    </div>
+    <div class="settings-icon" id="refresh-btn" (click)="refresh()">
+      <i class="ion-ios-refresh"></i>
+    </div>
+  </div>
+  <div class="page-contents container-fluid d-flex flex-column pb-2">
+    <h1>Browse</h1>
+    <div class="list-container d-flex flex-column">
+      <div class="path-container">
+        <h5 id="path-display">{{currentPath}}</h5>
+      </div>
+      <div class="items-container" [class.dragged-over]="draggedOver" (drop)="drop($event)" (dragenter)="dragEnter($event)"
+        (dragleave)="dragLeave($event)">
+        <div class="item smooth-1" *ngFor="let item of items" (click)="onClick(item, $event)" (dblclick)="requestDownload(item, $event)">
+          <div class="item-icon mr-2">
+            <i [class.ion-ios-folder]="item.type ==='folder'" [class.ion-ios-document]="item.type ==='file'"></i>
+          </div>
+          <div class="item-title mr-2">
+            <small>{{item.name}}</small>
+          </div>
+          <div class="item-size">
+            <small>{{getSizeString(item)}}</small>
+          </div>
+        </div>
+        <app-busy-screen *ngIf="busy"></app-busy-screen>
+        <div class="drag-prompt">
+          <div>
+            <div class="large-icon d-flex align-items-center justify-content-center">
+              <i class="ion-ios-cloud-upload"></i>
+            </div>
+            <h3>Drop file(s) here to upload</h3>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

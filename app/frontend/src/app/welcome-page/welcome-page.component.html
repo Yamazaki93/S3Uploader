@@ -1,0 +1,56 @@
+<div class="page-container">
+  <div class="page-header-overlay bg-gradient-primary">
+  </div>
+  <div class="side-header-container">
+    <div class="settings-icon" id="settings-btn" (click)="goToSettings()">
+      <i class="ion-ios-settings"></i>
+      <div class="badge bg-info" *ngIf="updateAvailable">
+        <i class="ion-ios-information"></i>
+      </div>
+    </div>
+  </div>
+  <div class="page-contents container-fluid pt-5">
+    <div class="row">
+      <div class="col">
+        <div class="card card-stats mb-4 mb-xl-0">
+          <div class="card-body text-center">
+            <h1>Home</h1>
+            <p>To get started, click Add An AWS Account. You can double click a file to download or drag a file into the tree/browser to upload.</p>
+            <div class="welcome-contents">
+              <div class="actions pluses">
+                <div class="action">
+                  <div class="action-icon bg-primary mr-3 text-secondary">
+                    <i class="ion-ios-add"></i>
+                  </div>
+                  <div class="text-primary action-text">
+                    <a href="javascript:void(0)" (click)="openAddAccountWindow()">Add An AWS Account</a>
+                  </div>
+                </div>
+                <div class="action">
+                  <div class="action-icon bg-info mr-3 text-secondary">
+                    <i class="ion-ios-book"></i>
+                  </div>
+                  <div class="text-primary action-text">
+                    <a href="javascript:void(0)" (click)="openAWSCredHelp()">Read about AWS Credential File</a>
+                  </div>
+                </div>
+                <div class="action">
+                  <div class="action-icon bg-warning mr-3 text-secondary">
+                    <i class="ion-ios-card"></i>
+                  </div>
+                  <div class="text-primary action-text">
+                    <a href="javascript:void(0)" (click)="openAWSS3Pricing()">Read about AWS S3 Pricing Scheme</a>
+                  </div>
+                </div>
+              </div>
+              <div class="histories text-left">
+                <small class="text-gray">History</small>
+                <app-history-list></app-history-list>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

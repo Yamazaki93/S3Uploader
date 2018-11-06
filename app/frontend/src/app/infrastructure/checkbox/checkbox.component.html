@@ -1,0 +1,10 @@
+<!-- <div class="custom-control custom-checkbox mb-3">
+  <input class="custom-control-input" id="customCheck1" type="checkbox" [checked]="checkedValue" (click)="onClick($event)">
+  <label class="custom-control-label" for="customCheck1">{{prompt}}</label>
+</div> -->
+<div class="custom-control custom-checkbox"  (click)="onClick($event)">
+  <input class="custom-control-input" type="checkbox" [checked]="checkedValue">
+  <label class="custom-control-label">
+    <ng-content></ng-content>
+  </label>
+</div>

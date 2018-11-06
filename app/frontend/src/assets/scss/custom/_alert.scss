@@ -1,0 +1,29 @@
+//
+// Alert
+//
+
+@import "../core/alerts/alert";
+@import "../core/alerts/alert-dismissible";
+
+.top-noti {
+    border-radius: 5px;
+    &.success {
+        background: $success !important;
+    }
+    &.info {
+        background: $info !important;
+    }
+    &.warn {
+        & * {
+            color: white !important;
+        }
+        background: $warning !important;
+    }
+    &.error {
+        background: $danger !important;
+    }
+}
+
+.simple-notification-wrapper {
+    width: 500px !important;
+}

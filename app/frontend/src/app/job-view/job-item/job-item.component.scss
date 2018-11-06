@@ -1,0 +1,122 @@
+$icon-size: 35px;
+:host {
+    width: 100%;
+}
+
+.flex-center-all{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.job {
+    display: flex;
+    padding: 5px;
+    width: 100%;
+    .icon-container {
+        width: 45px;
+        height: 45px;
+        padding: 5px;
+        flex-shrink: 0;
+        .job-icon {
+            width: $icon-size;
+            height: $icon-size;
+            font-size: 17px;
+            color: var(--primary);
+            position: relative;
+            app-spinner {
+                position: absolute;
+            }
+            .outline {
+                height: $icon-size;
+                width: $icon-size;
+                position: absolute;
+                border: 2px solid var(--primary);
+                border-radius: 50%;
+                transform-origin: center;
+                animation: outline-entry .4s cubic-bezier(0.19, 1, 0.22, 1) forwards;
+                &.success  {
+                    border-color: var(--success);
+                }
+                &.failed  {
+                    border-color: var(--danger);
+                }
+            }
+            i.success {
+                color: var(--success);
+            }
+            i.failed {
+                color: var(--danger);
+            }
+        }
+    }
+    .job-content {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        min-width: 0;
+        justify-content: center;
+        .progress {
+            margin: 0;
+            flex-shrink: 0;
+        }
+        .job-desc {
+            width: 100%;
+            flex-shrink: 1;
+            display: flex;
+            padding-left: 5px;
+            flex-shrink: 1;
+            min-width: 0;
+            .desc-text{
+                white-space: nowrap;
+                text-overflow: ellipsis;
+                overflow: hidden;
+            }
+        }
+        .job-actions{
+            max-width: 0;
+            overflow: 0;
+            opacity: 0;
+            overflow: hidden;
+            padding-left: 10px;
+            flex-shrink: 0;
+            font-size: 14px;
+            display: flex;
+            justify-content: flex-end;
+            .job-action{
+                cursor: pointer;
+                width: 20px;
+                height: 20px;
+                border-radius: 50%;
+                border: solid 1px var(--gray);
+                margin-right: 5px;
+                &:hover {
+                    background: rgba(#8898aa, 0.2);
+                }
+            }
+        }
+        .message {
+            line-height: 15px;
+            padding-left: 5px;
+        }
+    }
+    &.finished:hover .job-content .job-actions.finished{
+        opacity: 1;
+        max-width: 200px;
+    }
+    &:not(.finished):hover .job-content .job-actions.running{
+        opacity: 1;
+        max-width: 200px;
+    }
+}
+
+
+@keyframes outline-entry {
+    0% {
+        transform: scale(0);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}

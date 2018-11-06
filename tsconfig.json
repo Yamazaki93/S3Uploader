@@ -1,0 +1,26 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "outDir": "dist/",
+        "target": "es5",
+        "baseUrl": ".",
+        "lib": ["es5", "es6", "dom"],
+        "paths": {
+            "*": [
+                "node_modules/*"
+            ]
+        },
+        "downlevelIteration": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+    },
+    "include": [
+        "app/**/*"
+    ],
+    "exclude": [
+        "app/frontend/*",
+        "app/tests/*"
+    ]
+}

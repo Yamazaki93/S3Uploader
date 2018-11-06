@@ -1,0 +1,12 @@
+<div [style.transform]="'translate(' + X + 'px,' + Y + 'px)'" class="tooltip show" role="tooltip"
+  [class.bs-tooltip-top]="tooltipPlacement === 'top'"
+  [class.bs-tooltip-left]="tooltipPlacement === 'left'"
+  [class.bs-tooltip-bottom]="tooltipPlacement === 'bottom'"
+  [class.bs-tooltip-right]="tooltipPlacement === 'right'"
+  [class.fade-in]="show"
+  #tp>
+  <div class="arrow" [style.transform]="'translate(' + aX + 'px,' + aY + 'px)'" #arrow></div>
+  <div class="tooltip-inner">
+    {{tooltipTitle}}
+  </div>
+</div>

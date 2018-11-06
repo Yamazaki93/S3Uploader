@@ -1,0 +1,9 @@
+<div class="d-flex main-container" [@fadeAnimation]="o.isActivated ? o.activatedRoute : ''"  (dragstart)="disable($event)" (dragover)="disable($event)" (drop)="disable($event)">
+    <div class="side-nav-container" ngResizable rzHandles="e" style="width: 30%">
+        <app-side-nav></app-side-nav>
+    </div>
+    <div class="router-container">
+        <router-outlet #o="outlet"></router-outlet>
+    </div>
+</div>
+<simple-notifications></simple-notifications>

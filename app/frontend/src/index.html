@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <script>
+    if (document.location.protocol.indexOf('file') !== -1) {
+      document.write(`<base href="${document.location}" />`)
+      var electron = require('electron');
+    } else {
+      document.write('<base href="/" />');
+    }
+  </script>
+  <title>Palladium</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="icon" type="image/x-icon" href="favicon.ico">
+  <!-- Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,600,700" rel="stylesheet">
+  <!-- Argon CSS -->
+  <link type="text/css" href="assets/css/argon.css" rel="stylesheet">
+  <link href="assets/css/ionicons.min.css" rel="stylesheet">
+</head>
+
+<body>
+  <app-root></app-root>
+</body>
+
+</html>

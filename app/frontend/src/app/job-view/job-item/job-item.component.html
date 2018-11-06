@@ -1,0 +1,42 @@
+<div class="job" [class.finished]="_jobstatus !== 'r'">
+  <div class="icon-container">
+    <div class="job-icon flex-center-all">
+      <i [class.ion-ios-cloud-upload]="_jobtype === 'upload'" [class.ion-ios-cloud-download]="_jobtype === 'download'"
+        [class.success]="_jobstatus === 'c'" [class.failed]="_jobstatus === 'f'"></i>
+      <app-spinner *ngIf="_jobstatus === 'r'" [size]="'35'"></app-spinner>
+      <div *ngIf="_jobstatus !== 'r'" class="outline" [class.success]="_jobstatus === 'c'" [class.failed]="_jobstatus === 'f'"></div>
+    </div>
+  </div>
+  <div class="job-content">
+    <div class="d-flex">
+      <div class="job-desc">
+        <div class="desc-text">{{source}}</div>
+        <i class="ion-ios-arrow-round-forward ml-2 mr-2"></i>
+        <div class="desc-text">{{destination}}</div>
+      </div>
+      <div class="ml-2 progress-percentage" *ngIf="_jobstatus === 'r'" @ngIfAnimation>
+        <span>{{percentage}}%</span>
+      </div>
+      <div class="job-actions running smooth-4" *ngIf="_jobstatus === 'r'">
+        <div class="job-action flex-center-all" id="stop-job-btn" (click)="onStopJob($event)">
+          <i class="ion-ios-square"></i>
+        </div>
+      </div>
+      <div class="job-actions finished smooth-4"  *ngIf="_jobstatus !== 'r'">
+        <div class="job-action flex-center-all" id="open-folder-btn" (click)="onOpenFileLocation($event)">
+          <i class="ion-ios-folder-open"></i>
+        </div>
+        <div class="job-action flex-center-all" id="delete-job-btn" (click)="onDeleteJob($event)">
+          <i class="ion-ios-trash"></i>
+        </div>
+      </div>
+    </div>
+    <div class="progress" *ngIf="_jobstatus === 'r'" @ngIfAnimation>
+      <div class="progress-bar bg-primary smooth" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"
+        [style.width.%]="percentage"></div>
+    </div>
+    <div class="message" *ngIf="_jobstatus === 'f'" @ngIfAnimation>
+      <small class="text-danger">{{message}}</small>
+    </div>
+  </div>
+</div>

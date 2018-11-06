@@ -1,0 +1,6 @@
+<div class="job-container d-flex flex-column">
+  <app-job-item *ngFor="let j of jobList; trackBy: trackJob" [jobType]="j.type" [jobStatus]="j.status" [percentage]="j.percentage"
+    @ngIfAnimation (toDelete)="deleteJob(j)" [source]="j.from" [destination]="j.to" (toOpen)="openJobFileLication(j)"
+    [message]="j.message"
+    (toStop)="stopJob(j)"></app-job-item>
+</div>

@@ -1,0 +1,25 @@
+<div class="nav-container d-flex flex-column">
+    <div class="title-container d-flex">
+        <div style="width: 100%;">Download/Upload</div>
+        <div class="action-icon" (click)="clearNotRunningJobs()" appTooltip tooltipTitle="Remove all non-running jobs"
+            tooltipPlacement="bottom">
+            <i class="ion-ios-trash"></i>
+        </div>
+    </div>
+    <div class="job-list">
+        <app-job-list></app-job-list>
+    </div>
+    <div class="title-container d-flex">
+        <div style="width: 100%;">Accounts</div>
+        <div class="action-icon" (click)="onCollapseAll()">
+            <i class="ion-ios-arrow-up"></i>
+        </div>
+        <div class="action-icon" (click)="openAddAccount()" appTooltip tooltipTitle="Add new AWS Account"
+            tooltipPlacement="right">
+            <i class="ion-ios-add"></i>
+        </div>
+    </div>
+    <div class="account-list">
+        <app-tree-view></app-tree-view>
+    </div>
+</div>

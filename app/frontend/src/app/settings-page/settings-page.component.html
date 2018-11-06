@@ -1,0 +1,162 @@
+<div class="page-container">
+  <div class="side-header-container left">
+    <div class="settings-icon" id="back-btn" (click)="goToHome()">
+      <i class="ion-ios-arrow-round-back"></i>
+    </div>
+  </div>
+  <div class="page-contents container-fluid">
+    <h1>Settings</h1>
+    <div class="row">
+      <div class="col">
+        <div class="card card-stats mb-4 mb-xl-0">
+          <div class="card-body">
+            <h2>Prompt For Confirmation On Upload</h2>
+            <small>Uncheck the checkbox to skip confirmation dialog on upload. When confirmation is turned off, all
+              uploads will start as soon as files are dropped and default file name will be used.</small>
+            <app-checkbox (checkedValueChange)="updatePrompt($event)" [(checkedValue)]="promptUpload">Prompt for
+              confirmation</app-checkbox>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <div class="card card-stats mb-4 mb-xl-0">
+          <div class="card-body">
+            <h2>Download Path</h2>
+            <div>
+              <small>Choose a folder to save downloaded files. The default location is the "Downloads" folder under
+                your home
+                directory</small></div>
+            <div class="form-group mt-3">
+              <input type="text" id="download-path-display" placeholder="Default Location" class="form-control form-control-alternative"
+                disabled [(ngModel)]="downloadPath" />
+            </div>
+            <button class="btn btn-primary" id="browse-download-path-btn" (click)="browseDownloadPath()">Select
+              Download Path</button>
+            <button class="btn btn-warning" id="reset-download-path-btn" (click)="resetDownloadPath()">Reset Download
+              Path</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <div class="card card-stats mb-4 mb-xl-0">
+          <div class="card-body">
+            <h2>Request Tracking</h2>
+            <div>
+              <small>Request Tracking helps you keep track of requests made to AWS through the app. The numbers are for
+                reference only and may not reflect accurate request counts on AWS. Please check your AWS billing
+                dashboard for the accurate request counts.</small></div>
+            <div class="row" id="request-counts">
+              <div class="col">
+                <h5>GET: {{requestCounts['0']}}</h5>
+              </div>
+              <div class="col">
+                <h5>PUT: {{requestCounts['1']}}</h5>
+              </div>
+              <div class="col">
+                <h5>COPY: {{requestCounts['2']}}</h5>
+              </div>
+              <div class="col">
+                <h5>POST: {{requestCounts['3']}}</h5>
+              </div>
+              <div class="col">
+                <h5>DELETE: {{requestCounts['4']}}</h5>
+              </div>
+              <div class="col">
+                <h5>LIST: {{requestCounts['5']}}</h5>
+              </div>
+              <div class="col">
+                <h5>SELECT: {{requestCounts['6']}}</h5>
+              </div>
+            </div>
+            <button class="btn btn-danger mt-2" id="reset-request-btn" (click)="resetRequests()">Reset Request Count</button>
+            <button class="btn btn-warning mt-2" id="clear-history-btn" (click)="clearHistories()">Clear Upload/Download Histories</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col">
+        <div class="card card-stats mb-4 mb-xl-0">
+          <div class="card-body">
+            <h2>Usage Data Collection</h2>
+            <a href="javascript:void(0)" (click)="openDataCollectionSupplement()">Click here to see the Data Collection Supplement</a>
+            <app-checkbox (checkedValueChange)="changeAnalyticsOpt($event)" [(checkedValue)]="optInAnalytics">Opt-in
+              For Anonymous Usage Data Collection</app-checkbox>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="row mt-3">
+      <div class="col-12">
+        <div class="card card-stats mb-4 mb-xl-0">
+          <div class="card-body">
+            <h2>About</h2>
+            <h5>Palladium version 0.1.0 MIT Licensed.</h5>
+            <h5>For help, issues and suggestions, see our <a href="javascript:void(0)" (click)="openIssuesPage()">Github page</a></h5>
+            <h5>If you like this app, you can support it by </h5>
+            <style>
+              .bmc-button img {
+                width: 27px !important;
+                margin-bottom: 1px !important;
+                box-shadow: none !important;
+                border: none !important;
+                vertical-align: middle !important;
+              }
+
+              .bmc-button {
+                line-height: 36px !important;
+                height: 37px !important;
+                text-decoration: none !important;
+                display: inline-flex !important;
+                color: #ffffff !important;
+                background-color: #FF813F !important;
+                border-radius: 3px !important;
+                border: 1px solid transparent !important;
+                padding: 0px 9px !important;
+                font-size: 17px !important;
+                letter-spacing: -0.08px !important;
+                margin: 0 auto !important;
+                font-family: 'Lato', sans-serif !important;
+                -webkit-box-sizing: border-box !important;
+                box-sizing: border-box !important;
+                -o-transition: 0.3s all linear !important;
+                -webkit-transition: 0.3s all linear !important;
+                -moz-transition: 0.3s all linear !important;
+                -ms-transition: 0.3s all linear !important;
+                transition: 0.3s all linear !important;
+              }
+
+              .bmc-button:hover,
+              .bmc-button:active,
+              .bmc-button:focus {
+                text-decoration: none !important;
+                opacity: 0.85 !important;
+                color: #ffffff !important;
+              }
+            </style>
+            <link href="https://fonts.googleapis.com/css?family=Lato&subset=latin,latin-ext" rel="stylesheet"><a class="bmc-button"
+              target="_blank" href="javascript:void(0)" (click)="openBMC()"><img src="https://www.buymeacoffee.com/assets/img/BMC-btn-logo.svg"
+                alt="Buy me a tea"><span style="margin-left:5px">Buy me a tea</span></a>
+            <br/>
+            <h5 *ngIf="updaterStatus === UpdaterStatusEnum.UpdateAvailable">Update available! New version:
+              {{updateVersion}}</h5>
+            <div style="display: flex; align-items: center">
+              <app-spinner *ngIf="updaterStatus === UpdaterStatusEnum.CheckingUpdate || updaterStatus === UpdaterStatusEnum.DownloadingUpdate"></app-spinner>
+              <small *ngIf="updaterStatus === UpdaterStatusEnum.DownloadingUpdate" class="ml-2">Downloading:
+                {{updateDownloadProgress}}%</small>
+            </div>
+            <button *ngIf="updaterStatus === UpdaterStatusEnum.NoUpdateAvailable" class="btn btn-primary" id="check-update-btn"
+              (click)="checkForUpdate()">Check
+              For Update</button>
+            <button *ngIf="updaterStatus === UpdaterStatusEnum.UpdateAvailable" class="btn btn-primary" id="install-update-btn"
+              (click)="installUpdate()">Install Update</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

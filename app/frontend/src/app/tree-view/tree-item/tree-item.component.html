@@ -1,0 +1,32 @@
+<div class="tree-item" (dblclick)="onDblClick($event)" (click)="onClick($event)">
+  <div class="drop-target d-flex" style="position: relative;" [class.busy]="loading"
+  (drop)="drop($event)" (dragenter)="dragEnter($event)" (dragleave)="dragLeave($event)">
+    <div class="tree-icon mr-2">
+      <div style="min-width: 12px;" (click)="onExpand($event)">
+        <i *ngIf="item && item.subItems" [class.ion-ios-arrow-down]="item && item.expand" [class.ion-ios-arrow-up]="item && !item.expand"></i>
+      </div>
+    </div>
+    <div class="tree-icon mr-2">
+      <i [class.ion-ios-folder]="getNodeType() === 'f'" [class.ion-ios-document]="getNodeType() === 'fi'"
+        [class.ion-ios-contact]="getNodeType() === 'a'" [class.ion-ios-archive]="getNodeType() === 'b'"
+        [class.ion-ios-cube]="getNodeType() === 'c'"
+        [class.blue]="getNodeType() === 'a'"></i>
+    </div>
+    <div class="tree-content">
+      <span *ngIf="item">{{item.name}}</span>
+    </div>
+    <div class="tree-icon mr-2 ml-2">
+      <app-spinner *ngIf="loading" [size]="'16'"></app-spinner>
+      <i class="drop-hint ion-ios-cloud-upload"  [class.dragged-over]="draggedOver"></i>
+    </div>
+    <div class="ml-2 item-actions" *ngIf="getNodeType() !== 'c' && getNodeType() !== 'fi'">
+      <div class="action-button" (click)="onRefresh($event)">
+        <i class="ion-ios-refresh"></i>
+      </div>
+    </div>
+  </div>
+  <div class="sub-items smooth" *ngIf="item && item.subItems && item.expand" [class.toggled]="item && item.expand">
+    <app-tree-item *ngFor="let node of item.subItems" [item]="node" [loading]="node.busy"></app-tree-item>
+  </div>
+
+</div>

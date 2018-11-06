@@ -1,0 +1,9 @@
+node_modules
+dist
+coverage
+dist-electron
+.DS_Store
+tests/tmp
+test-results
+mac-publish.sh
+windows-publish.ps1

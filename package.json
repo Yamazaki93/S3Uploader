@@ -1,0 +1,83 @@
+{
+  "name": "palladium",
+  "version": "0.1.0",
+  "description": "An UI for AWS S3",
+  "displayName": "Palladuim",
+  "author": {
+    "name": "Michael Lu",
+    "email": "michaellu@rhodiumcode.com"
+  },
+  "license": "SEE LICENSE IN LICENSE",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Yamazaki93/codename-palladium"
+  },
+  "main": "./dist/main.js",
+  "scripts": {
+    "build": "tsc --inlineSourceMap false",
+    "watch": "tsc -w",
+    "build-tests": "rimraf app/tests/dist && tsc -p app/tests",
+    "test": "npm run build && npm run build-tests && mocha --timeout 20000 \"./app/tests/dist/**/*.js\"",
+    "test:unit": "npm run build && npm run build-tests && mocha --timeout 20000 \"./app/tests/dist/tests/unit/*.js\"",
+    "test:ci": "npm run build && npm run build-tests && mocha --reporter mocha-jenkins-reporter --timeout 20000 \"./app/tests/dist/tests/unit/*.js\"",
+    "test:all": "npm run build && npm run build-tests && mocha -R mocha-jenkins-reporter --timeout 20000 \"./app/tests/dist/**/*.js\"",
+    "test:one": "npm run build && npm run build-tests && mocha --watch -u bdd \"./app/tests/dist/**/*.js\"",
+    "lint": "tslint -c tslint.json -p tsconfig.json",
+    "start": "npm run build && electron ./dist/main.js",
+    "postinstall": "electron-builder install-app-deps",
+    "dist": "electron-builder --publish never"
+  },
+  "build": {
+    "appId": "com.rhodiumcode.palladium",
+    "productName": "Palladium",
+    "directories": {
+      "buildResources": "build",
+      "output": "dist-electron"
+    },
+    "publish": {
+      "provider": "github"
+    },
+    "mac": {
+      "target": [
+        {
+          "target": "dmg"
+        },
+        {
+          "target": "zip"
+        }
+      ],
+      "icon": "build/icon.icns",
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": "nsis",
+      "icon": "build/icon.ico"
+    },
+    "extends": null
+  },
+  "devDependencies": {
+    "@types/mocha": "^5.2.5",
+    "@types/rimraf": "^2.0.2",
+    "@types/sinon": "^5.0.5",
+    "@types/uuid": "^3.4.4",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "electron": "2.0.5",
+    "electron-chromedriver": "^3.0.0-beta.1",
+    "mocha": "^5.2.0",
+    "mocha-jenkins-reporter": "^0.4.1",
+    "rimraf": "^2.6.2",
+    "spectron": "^4.0.0",
+    "tslint": "^5.10.0",
+    "typescript": "^3.1.6"
+  },
+  "dependencies": {
+    "aws-sdk": "^2.334.0",
+    "axios": "^0.18.0",
+    "electron-google-analytics": "^0.1.0",
+    "electron-log": "^2.2.17",
+    "electron-updater": "^3.1.6",
+    "sinon": "^7.0.0",
+    "uuid": "^3.3.2"
+  }
+}

@@ -1,0 +1,28 @@
+:host {
+    width: 100%;
+}
+.history-container {
+    width: 100%;
+    position: relative;
+}
+
+.history-entry {
+    display: flex;
+    width: 100%;
+    .entry-type {
+        flex-shrink: 0;
+        font-size: 16px;
+    }
+    .entry-content {
+        width: 100%;
+        min-width: 0;
+        text-overflow: ellipsis;
+        overflow-x: hidden;
+        white-space: nowrap;
+        font-size: 12px;
+    }
+    .entry-time {
+        font-size: 12px;
+        flex-shrink: 0;
+    }
+}

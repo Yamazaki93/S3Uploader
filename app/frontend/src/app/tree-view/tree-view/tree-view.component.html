@@ -1,0 +1,4 @@
+<div class="tree-container">
+  <app-tree-item [item]="node" *ngFor="let node of rootNodes" [loading]="node.busy"></app-tree-item>
+</div>
+<app-busy-screen *ngIf="loading"></app-busy-screen>

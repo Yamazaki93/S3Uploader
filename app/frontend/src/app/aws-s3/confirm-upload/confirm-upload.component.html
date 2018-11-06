@@ -1,0 +1,50 @@
+<div class="screen-container d-flex justify-content-center align-items-center">
+  <div class="card-container">
+    <div class="card text-center" style="width: 70rem;">
+      <div class="card-body smooth">
+        <h2 class="card-title">Confirm Upload</h2>
+        <h5 class="text-muted">to: {{location()}}</h5>
+        <div class="close-container">
+          <a class="close-btn" (click)="close()">
+            <i class="ion-ios-close"></i>
+          </a>
+        </div>
+        <form class="text-left p-1" name="upload-form" id="upload-form">
+          <div class="upload-items p-2">
+            <div class="row mb-2" *ngFor="let item of Items; let index = index">
+              <div class="col-12">
+                <div class="from-group" [class.has-success]="false" [class.has-danger]="false">
+                  <h4 class="form-text text-muted m-0"><i class="ion-ios-document"></i> {{item.originalName}} upload as</h4>
+                  <div class="input-group">
+                    <input type="text" name="account-name-{{index}}" class="form-control" [class.is-valid]="false"
+                      [class.is-invalid]="false" placeholder="New File Name" [(ngModel)]="Items[index].newName" (input)="onTextChange()">
+                    <div class="input-group-append">
+                      <button class="btn btn-outline-danger" type="button" (click)="removeItem(item)"><i class="ion-ios-trash"></i></button>
+                    </div>
+                  </div>
+                  <div class="invalid-feedback">
+                    Name invalid
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-1">
+            <div class="col-12">
+              <div style="display: inline-block" appTooltip tooltipTitle="You can change this later in the settings page"
+                tooltipPlacement="top">
+                <app-checkbox [(checkedValue)]="promptSetting" (checkedValueChange)="changePromptSetting($event)">Ask
+                  for confirmation on upload</app-checkbox>
+              </div>
+            </div>
+          </div>
+          <div class="row mt-3">
+            <div class="col-12">
+              <button class="btn btn-primary" [class.disabled]="!isValid" (click)="upload()">Upload</button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

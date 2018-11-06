@@ -1,0 +1,62 @@
+:host {
+    width: 100%;
+    position: relative;
+}
+
+.tree-item {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    position: relative;
+    .tree-icon {
+        flex-shrink: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        i {
+            font-size: 16px;
+        }
+    }
+    .item-actions {
+        position: absolute;
+        right: -15px;
+        .action-button:hover {
+            i {
+                color: var(--light);
+            }
+        }
+    }
+    .tree-content {
+        width: 100%;
+        white-space: nowrap;
+        overflow: hidden;
+        font-size: 14px;
+        text-overflow: ellipsis;
+        line-height: 24px;
+    }
+    .sub-items {
+        max-height: 0;
+        width: 100%;
+        padding-left: 10px;
+        overflow: hidden;
+        &.toggled {
+            max-height: inherit !important;
+        }
+    }
+    &:hover > div:not(.busy):hover {
+        & >.item-actions {
+            right: 10px;
+        }
+    }
+    .drop-hint {
+        display: none;
+        &.dragged-over {
+            display: block;
+        }
+    }
+}
+
+.blue {
+    color: var(--blue);
+}

@@ -1,0 +1,19 @@
+<div class="screen-container d-flex justify-content-center align-items-center">
+  <div class="card-container">
+    <div class="card text-center" style="width: 70rem;">
+      <div class="card-body smooth">
+        <h4 class="card-title">Usage Data Collection</h4>
+        <p>Hi, thanks for using Palladium!</p>
+        <p> Please indicate below if
+          you want to opt-in for anonymous usage data collection to help us make Palladium better. 
+        </p> 
+        <p>
+          We currently use Google Analytics as our data processing service, for Google Analytics' notice to users, please click <a href="javascript:void(0)" (click)="openHelp()">here</a>
+        </p>
+        <p>You can change your mind any time via the Settings Menu <i class="ion-ios-settings"></i>.</p>
+        <app-checkbox [(checkedValue)]="optIn" style="font-size: 26px;">Opt-in To Help Improve Palladium</app-checkbox>
+        <button class="btn btn-primary" (click)="confirm()">Confirm</button>
+      </div>
+    </div>
+  </div>
+</div>

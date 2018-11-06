@@ -1,0 +1,14 @@
+<div class="history-list">
+  <div class="history-entry" [class.text-success]="item.status ==='success'" [class.text-danger]="item.status === 'failed'" *ngFor="let item of entries">
+    <div class="entry-type mr-1">
+      <i [class.ion-ios-cloud-upload]="item.type === 'upload'"
+      [class.ion-ios-cloud-download]="item.type === 'download'"></i>
+    </div>
+    <div class="entry-content">
+      {{item.name}}
+    </div>
+    <div class="entry-time ml-1 mr-1">
+      {{item.time}}
+    </div>
+  </div>
+</div>
