@@ -18,7 +18,7 @@ import { AnalyticsTracked } from '../infrastructure/analytics-tracked';
     './settings-page.component.scss'
   ]
 })
-@AnalyticsTracked()
+@AnalyticsTracked("SettingsPageComponent")
 export class SettingsPageComponent extends SubscriptionComponent implements OnInit {
 
   private requestCounts: any;

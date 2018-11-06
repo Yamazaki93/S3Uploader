@@ -17,7 +17,7 @@ import { AnalyticsTracked } from '../infrastructure/analytics-tracked';
     './welcome-page.component.scss'
   ]
 })
-@AnalyticsTracked()
+@AnalyticsTracked("WelcomePageComponent")
 export class WelcomePageComponent extends SubscriptionComponent implements OnInit {
 
   private updateAvailable = false;

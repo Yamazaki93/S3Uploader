@@ -17,7 +17,7 @@ import { AnalyticsService } from 'src/app/infrastructure/services/analytics.serv
     './folder-browser.component.scss'
   ]
 })
-@AnalyticsTracked()
+@AnalyticsTracked("FolderBrowserComponent")
 export class FolderBrowserComponent extends SubscriptionComponent implements OnInit {
 
   busy = false;

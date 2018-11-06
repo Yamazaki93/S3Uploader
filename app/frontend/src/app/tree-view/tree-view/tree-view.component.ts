@@ -14,7 +14,7 @@ import { AnalyticsService } from 'src/app/infrastructure/services/analytics.serv
   templateUrl: './tree-view.component.html',
   styleUrls: ['./tree-view.component.scss']
 })
-@AnalyticsTracked()
+@AnalyticsTracked("TreeViewComponent")
 export class TreeViewComponent extends SubscriptionComponent implements OnInit {
 
   rootNodes: TreeNode[] = []

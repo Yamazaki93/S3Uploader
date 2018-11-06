@@ -1,6 +1,6 @@
 import { AnalyticsService } from "./services/analytics.service";
 
-export function AnalyticsTracked(): ClassDecorator {
+export function AnalyticsTracked(screen: string): ClassDecorator {
     return function (constructor: any) {
         // You can add/remove events for your needs
         const LIFECYCLE_HOOKS = [
@@ -14,7 +14,7 @@ export function AnalyticsTracked(): ClassDecorator {
             constructor.prototype[hook] = function (...args) {
                 original && original.apply(this, args);
                 if(this.analytics instanceof AnalyticsService) {
-                    (this.analytics as AnalyticsService).screenView(component);
+                    (this.analytics as AnalyticsService).screenView(screen);
                 }
             }
         });
