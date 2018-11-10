@@ -1,0 +1,25 @@
+:host {
+    width: 100%;
+}
+.info-panel-container {
+    width: 100%;
+    .path-container {
+        padding: 5px;
+        border-bottom: 1px solid var(--secondary);
+        flex-shrink: 0;
+        h5 {
+            margin: 0;
+        }
+    }
+    .details-container{
+        .details-section {
+            width: 100%;
+            min-width: 0;
+            padding: 5px;
+            border-right: 1px solid var(--secondary);
+            &:last-child {
+                border: none !important;
+            }
+        }
+    }
+}

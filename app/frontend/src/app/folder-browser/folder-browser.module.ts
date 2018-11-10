@@ -4,6 +4,7 @@ import { FolderBrowserComponent } from './folder-browser/folder-browser.componen
 import { InfrastructureModule } from '../infrastructure/infrastructure.module';
 import { AwsS3Module } from '../aws-s3/aws-s3.module';
 import { TreeViewModule } from '../tree-view/tree-view.module';
+import { FileInfoComponent } from './file-info/file-info.component';
 
 @NgModule({
   imports: [
@@ -12,7 +13,7 @@ import { TreeViewModule } from '../tree-view/tree-view.module';
     AwsS3Module,
     TreeViewModule
   ],
-  declarations: [FolderBrowserComponent],
+  declarations: [FolderBrowserComponent, FileInfoComponent],
   exports: [FolderBrowserComponent]
 })
 export class FolderBrowserModule { }

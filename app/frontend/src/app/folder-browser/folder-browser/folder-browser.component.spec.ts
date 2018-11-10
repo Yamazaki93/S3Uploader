@@ -10,6 +10,7 @@ import { ElectronService } from 'src/app/infrastructure/services/electron.servic
 import { MockElectron } from 'src/app/infrastructure/mock-electron.service';
 import { TreeViewModule } from 'src/app/tree-view/tree-view.module';
 import { SelectionService } from 'src/app/tree-view/services/selection.service';
+import { FileInfoComponent } from '../file-info/file-info.component';
 
 
 const routes: Route[] = [
@@ -38,7 +39,7 @@ describe('FolderBrowserComponent', () => {
         TreeViewModule,
         RouterTestingModule.withRoutes(routes)
       ],
-      declarations: [FolderBrowserComponent],
+      declarations: [FolderBrowserComponent, FileInfoComponent],
       providers: [
         {
           provide: ActivatedRoute,
@@ -220,5 +221,30 @@ describe('FolderBrowserComponent', () => {
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('.items-container').classList).not.toContain('dragged-over');
+  });
+  it('should not display file-info tab when nothing selected', () => {
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.querySelector('app-file-info')).toBeNull();
+  });
+  it('should display file-info tab after selecting file', () => {
+    mockRoute.url.next(['hi', '123']);
+    let svc = TestBed.get(S3Service) as S3Service;
+    svc.ItemsEnumerated.emit({
+      parents: ['hi', '123'],
+      items: [
+        {
+          name: "23",
+          type: 'file',
+          size: 1048576,
+        }
+      ]
+    });
+
+    fixture.detectChanges();
+    fixture.nativeElement.querySelector('.items-container .item').dispatchEvent(new Event('click'));
+    fixture.detectChanges();
+    
+    expect(fixture.nativeElement.querySelector('app-file-info')).not.toBeNull(); 
   });
 });

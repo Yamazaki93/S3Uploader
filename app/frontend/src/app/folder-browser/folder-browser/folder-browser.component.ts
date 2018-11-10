@@ -21,6 +21,7 @@ import { AnalyticsService } from 'src/app/infrastructure/services/analytics.serv
 export class FolderBrowserComponent extends SubscriptionComponent implements OnInit {
 
   busy = false;
+  private selectedFile = "";
   private draggedOver = false;
   private dragCount = 0;
   private items = [];
@@ -74,6 +75,10 @@ export class FolderBrowserComponent extends SubscriptionComponent implements OnI
       let newPath = this.currentPath + '/' + item.name;
       this.router.navigateByUrl(`/browse/${newPath}`);
       this.selection.selectItem(newPath);
+    } else if(item.type === 'file') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.selectedFile = this.currentPath + '/' + item.name;
     }
   }
 
