@@ -1,5 +1,7 @@
 # S3Uploader
 
+![alt text](https://github.com/Yamazaki93/S3Uploader/raw/master/misc/s3uploader.gif "Preview")
+
 A minimalistic UI to conveniently upload and download files from AWS S3
 
 S3Uploader's UI is based on the beautiful [Argon Dashboard Theme by CreativeTim](https://www.creative-tim.com/product/argon-dashboard).
