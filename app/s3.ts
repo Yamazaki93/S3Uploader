@@ -30,8 +30,8 @@ export class S3Service implements IRequestTracked {
         ipcMain.on('S3-RequestDownload', (event: string, arg: any) => {
             this.downloadFile(arg.jobID, arg.account, arg.bucket, arg.key, arg.saveTo);
         });
-        ipcMain.on('S3-RequestUpload', (event: string, arg: any) => {
-            this.uploadFile(arg.jobID, arg.account, arg.bucket, arg.filePath, arg.newPath);
+        ipcMain.on('S3-RequestBulkUpload', (event: string, arg: any) => {
+            this.bulkUpload(arg.files, arg.parents);
         });
     }
 
@@ -68,28 +68,41 @@ export class S3Service implements IRequestTracked {
         });
     }
 
-    private uploadFile(jobID: string, account: string, bucket: string, filePath: string, newPath: string) {
-        if (fs.existsSync(filePath)) {
-            let file = fs.readFileSync(filePath);
-            let filepath = path.parse(filePath);
+    private bulkUpload(files: Array<{
+        jobID: string, account: string, bucket: string, filePath: string, newPath: string,
+    }>,                location: string[]) {
+        let jobs: Array<Promise<any>> = [];
+        files.forEach((f) => {
+            let file = fs.readFileSync(f.filePath);
+            let filepath = path.parse(f.filePath);
             let filename = `${filepath.name}${filepath.ext}`;
-            let r = this.upload(account, bucket, newPath, file);
-            let resultPromise = this.jobs.addManagedUploadJob(jobID, 'upload', r.request, filename, newPath, filePath);
-            let parents = [account, bucket].concat(newPath.split('/'));
+            let r = this.upload(f.account, f.bucket, f.newPath, file);
+            // tslint:disable-next-line:max-line-length
+            let resultPromise = this.jobs.addManagedUploadJob(f.jobID, 'upload', r.request, filename, f.newPath, f.filePath);
+            let parents = [f.account, f.bucket].concat(f.newPath.split('/'));
             parents.splice(parents.length - 1, 1);
             parents = this.pruneParentsArray(parents);
-            resultPromise.then((_) => {
-                this.window.webContents.send('S3-UploadSuccessful', { parents, filename });
-            }).catch((err) => {
-                this.window.webContents.send('S3-UploadFailed', { parents, filename });
-            });
-        }
+            jobs.push(
+                resultPromise.then((_) => {
+                    this.window.webContents.send('S3-UploadSuccessful', { parents, filename });
+                    return Promise.resolve(_);
+                }).catch((err) => {
+                    this.window.webContents.send('S3-UploadFailed', { parents, filename });
+                    return Promise.reject(err);
+                }),
+            );
+        });
+        Promise.all(jobs).then(() => {
+            this.window.webContents.send('S3-BulkUploadCompleted', {parents: this.pruneParentsArray(location)});
+        }).catch((err) => {
+            this.window.webContents.send('S3-BulkUploadFailed',  {parents: this.pruneParentsArray(location)});
+        });
     }
 
     private listObjects(account: string, bucket: string, prefix: string, delimiter = '/') {
         let parents = [account, bucket].concat(prefix.split('/'));
         parents = this.pruneParentsArray(parents);
-        this.window.webContents.send('S3-ListingObjects', {parents});
+        this.window.webContents.send('S3-ListingObjects', { parents });
         this.listObjectsReq(account, bucket, prefix, delimiter).then((result) => {
             // tslint:disable-next-line:max-line-length
             this.window.webContents.send('S3-ObjectListed', { parents, objects: result.Contents, folders: result.CommonPrefixes });

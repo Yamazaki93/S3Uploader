@@ -34,9 +34,13 @@ export class RequestUploadService {
         comp.destroy();
       });
     } else {
-      items.forEach(it => {
-        this.s3.requestUpload(account, bucket, it.path, prefix + it.newName);
+      let files = items.map(_ => {
+        return {
+          filePath: _.path,
+          newPath: prefix + _.newName
+        }
       });
+      this.s3.requestBulkUpload(account, bucket, prefix, files);
     }
   }
 }

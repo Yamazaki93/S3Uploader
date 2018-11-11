@@ -79,6 +79,13 @@ export class S3Service {
       });
     });
     this.electron.onCD('S3-UploadSuccessful', (event: string, arg: any) => {
+
+    });
+    this.electron.onCD('S3-BulkUploadCompleted', (event: string, arg: any) => {
+      let params = this.getS3Parameters(arg.parents);
+      this.listObjects(params.account, params.bucket, params.prefix);
+    });
+    this.electron.onCD('S3-BulkUploadFailed', (event: string, arg: any) => {
       let params = this.getS3Parameters(arg.parents);
       this.listObjects(params.account, params.bucket, params.prefix);
     });
@@ -91,8 +98,8 @@ export class S3Service {
   }
 
   getCachedItems(key: string): S3Item[] {
-    let items =  this._cachedItems[key];
-    if(items) {
+    let items = this._cachedItems[key];
+    if (items) {
       return items;
     } else {
       return [];
@@ -113,11 +120,22 @@ export class S3Service {
     return id.toString();
   }
 
-  requestUpload(account: string, bucket: string, filePath: string, newPath: string): string {
-    let id = uuid.v4();
-    this.electron.send('S3-RequestUpload', { jobID: id, account: account, bucket: bucket, filePath: filePath, newPath: newPath });
-    this.analytics.logEvent('S3', 'RequestUpload');
-    return id.toString();
+  requestBulkUpload(account: string, bucket: string, prefix: string, items: Array<{ filePath: string, newPath: string }>) {
+    let files = items.map(item => {
+      let id = uuid.v4();
+      return {
+        account: account,
+        bucket: bucket,
+        filePath: item.filePath,
+        newPath: item.newPath,
+        jobID: id,
+      }
+    });
+    this.electron.send('S3-RequestBulkUpload', {
+      files: files,
+      parents: [account, bucket].concat(prefix.split('/')) 
+    });
+    this.analytics.logEvent('S3', 'RequestBulkUpload');
   }
 
   browseDownloadPath() {
@@ -129,10 +147,10 @@ export class S3Service {
   }
   changeUploadPromptSetting(val: boolean) {
     this.analytics.logEvent('S3', 'ChangeUploadPromptSetting : ' + val);
-    this.electron.send('Settings-Set', {key: 'prompt-upload', value: val});
+    this.electron.send('Settings-Set', { key: 'prompt-upload', value: val });
   }
   private getS3Parameters(parents: string[]): { account: string, bucket: string, prefix: string } {
-    if(parents.length < 2) {
+    if (parents.length < 2) {
       return null;
     }
     let account = parents[0];

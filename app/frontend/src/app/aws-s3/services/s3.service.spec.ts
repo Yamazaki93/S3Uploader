@@ -70,14 +70,14 @@ describe('S3Service', () => {
     });
     expect(items.length).toBe(3);
   }));
-  it('should send S3-RequestUpload on requestUpload', inject([S3Service], (service: S3Service) => {
-    service.requestUpload("hi", "hi", "path", "prefix");
-    expect(electron.messageWasSent('S3-RequestUpload')).toBeTruthy();
+  it('should send S3-RequestBulkUpload on requestBulkUpload', inject([S3Service], (service: S3Service) => {
+    service.requestBulkUpload('hi', 'bucket', '', [{filePath: 'hi', newPath: 'hiagain'}])
+    expect(electron.messageWasSent('S3-RequestBulkUpload')).toBeTruthy();
   }));
-  it('should call listObject on S3-UploadSuccessful', inject([S3Service], (service: S3Service) => {
+  it('should call listObject on S3-BulkUploadCompleted', inject([S3Service], (service: S3Service) => {
     service.init();
     let spy = spyOn(service, 'listObjects');
-    electron.send('S3-UploadSuccessful',
+    electron.send('S3-BulkUploadCompleted',
       { parents: ['hi', 'bucket', 'prefix'], filename: 'test.txt' });
     expect(spy).toHaveBeenCalled();
   }));

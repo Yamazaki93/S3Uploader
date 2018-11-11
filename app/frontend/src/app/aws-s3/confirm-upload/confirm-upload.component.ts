@@ -32,9 +32,13 @@ export class ConfirmUploadComponent implements OnInit {
 
   upload() {
     if (this.account && this.bucket) {
-      this.Items.forEach(item => {
-        this.s3.requestUpload(this.account, this.bucket, item.path, this.prefix + item.newName);
-      })
+      let files = this.Items.map(_ => {
+        return {
+          filePath: _.path,
+          newPath: this.prefix + _.newName
+        }
+      });
+      this.s3.requestBulkUpload(this.account, this.bucket, this.prefix, files);
     }
     this.toClose.emit();
   }
