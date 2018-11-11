@@ -21,7 +21,7 @@ import { AnalyticsService } from 'src/app/infrastructure/services/analytics.serv
 export class FolderBrowserComponent extends SubscriptionComponent implements OnInit {
 
   busy = false;
-  private selectedFile = "";
+  private selectedFile: S3Item;
   private draggedOver = false;
   private dragCount = 0;
   private items = [];
@@ -78,7 +78,7 @@ export class FolderBrowserComponent extends SubscriptionComponent implements OnI
     } else if(item.type === 'file') {
       event.preventDefault();
       event.stopPropagation();
-      this.selectedFile = this.currentPath + '/' + item.name;
+      this.selectedFile = item;
     }
   }
 

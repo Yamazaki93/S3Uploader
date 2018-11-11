@@ -44,7 +44,12 @@ export class S3Service {
           return {
             name: _.Key,
             type: 'file',
-            size: _.Size
+            size: _.Size,
+            Etag: _.ETag,
+            LastModified: _.LastModified,
+            Metadata: _.Metadata,
+            ContentType: _.ContentType,
+            StorageClass: _.StorageClass,
           };
         });
       }
@@ -52,7 +57,12 @@ export class S3Service {
         items = items.concat(arg.folders.map(_ => {
           return {
             type: 'folder',
-            name: _.Prefix.substring(0, _.Prefix.length - 1).split('/').pop()
+            name: _.Prefix.substring(0, _.Prefix.length - 1).split('/').pop(),
+            Etag: _.ETag,
+            LastModified: _.LastModified,
+            Metadata: _.Metadata,
+            ContentType: _.ContentType,
+            StorageClass: _.StorageClass
           }
         }));
       }

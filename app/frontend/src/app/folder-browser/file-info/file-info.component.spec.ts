@@ -23,7 +23,10 @@ describe('FileInfoComponent', () => {
     expect(component).toBeTruthy();
   });
   it('should display file key', () => {
-    component.key = "hi.txt";
+    component.item = {
+      name: "hi.txt",
+      type: 'file',
+    };
     fixture.detectChanges();
 
     expect(fixture.nativeElement.querySelector('.path-container').innerHTML).toContain('hi.txt');

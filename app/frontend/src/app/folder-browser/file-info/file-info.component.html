@@ -1,13 +1,13 @@
-<div class="info-panel-container d-flex flex-column">
+<div class="info-panel-container d-flex flex-column" *ngIf="_item">
   <div class="path-container">
-    <h5>{{key}}</h5>
+    <h5>{{_item.name}}</h5>
   </div>
   <div class="details-container d-flex">
     <div class="details-section">
-      <h5>Summary</h5>
-    </div>
-    <div class="details-section">
-      <h5>Summary</h5>
+      <h3>Summary</h3>
+      <h5>Last Modified: {{_item.LastModified}}</h5>
+      <h5>Etag: {{_item.Etag}}</h5>
+      <h5>Storage Class: {{_item.StorageClass}}</h5>
     </div>
   </div>
 </div>
