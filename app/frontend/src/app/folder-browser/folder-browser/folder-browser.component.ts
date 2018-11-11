@@ -108,10 +108,6 @@ export class FolderBrowserComponent extends SubscriptionComponent implements OnI
     this.dragCount = 0;
     this.draggedOver = false;
     if (event.dataTransfer) {
-      // for (let f of event.dataTransfer.files) {
-      //   let params = this.getS3Parameters();
-      //   this.s3.requestUpload(params.account, params.bucket, f.path, params.prefix);
-      // }
       let promises = []
       for (let f of event.dataTransfer.items) {
         var item = f.webkitGetAsEntry();

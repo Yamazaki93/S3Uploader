@@ -79,16 +79,8 @@ export class S3Service {
       });
     });
     this.electron.onCD('S3-UploadSuccessful', (event: string, arg: any) => {
-      let item = {
-        name: arg.filename,
-        type: 'file'
-      };
-      this.ItemAdded.emit({ parents: arg.parents, item: item });
-      if (this._cachedItems[arg.parents.join('/')] && this._cachedItems[arg.parents.join('/')].filter(_ => _.name === item.name).length === 0) {
-        this._cachedItems[arg.parents.join('/')].push(item);
-      } else {
-        this._cachedItems[arg.parents.join('/')] = [item];
-      }
+      let params = this.getS3Parameters(arg.parents);
+      this.listObjects(params.account, params.bucket, params.prefix);
     });
     this.electron.onCD('Settings-SettingsChanged', (event: string, arg: any) => {
       this._downloadPath.next(arg['download-path']);
@@ -138,5 +130,14 @@ export class S3Service {
   changeUploadPromptSetting(val: boolean) {
     this.analytics.logEvent('S3', 'ChangeUploadPromptSetting : ' + val);
     this.electron.send('Settings-Set', {key: 'prompt-upload', value: val});
+  }
+  private getS3Parameters(parents: string[]): { account: string, bucket: string, prefix: string } {
+    if(parents.length < 2) {
+      return null;
+    }
+    let account = parents[0];
+    let bucket = parents[1];
+    let prefix = (parents.slice(2, parents.length)).join('/');
+    return { account: account, bucket: bucket, prefix: prefix ? prefix + '/' : "" };
   }
 }

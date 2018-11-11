@@ -74,19 +74,12 @@ describe('S3Service', () => {
     service.requestUpload("hi", "hi", "path", "prefix");
     expect(electron.messageWasSent('S3-RequestUpload')).toBeTruthy();
   }));
-  it('should emit ItemAdded on S3-UploadSuccessful', inject([S3Service], (service: S3Service) => {
-    let item : S3Item;
-    let parents: string[];
-    service.ItemAdded.subscribe( _ => {
-      item = _.item;
-      parents = _.parents;
-    });
+  it('should call listObject on S3-UploadSuccessful', inject([S3Service], (service: S3Service) => {
     service.init();
+    let spy = spyOn(service, 'listObjects');
     electron.send('S3-UploadSuccessful',
       { parents: ['hi', 'bucket', 'prefix'], filename: 'test.txt' });
-    expect(item.name).toBe('test.txt');
-    expect(parents.length).toBe(3);
-    expect(parents[2]).toBe('prefix');
+    expect(spy).toHaveBeenCalled();
   }));
   it('should emit RefreshingObjects with correct parents on S3-ListingObjects', inject([S3Service], (service: S3Service) => {
     let parents = [];
@@ -113,33 +106,5 @@ describe('S3Service', () => {
     });
 
     expect(service.getCachedItems('hi/123').length).toBe(3);
-  }));
-  it('should add to cached items on S3-UploadSuccessful', inject([S3Service], (service: S3Service) => {
-    service.init();
-    electron.send('S3-ObjectListed', {
-      folders: [
-        { Prefix: "hi/" }
-      ],
-      objects: [
-        { Key: "abc" },
-        { Key: "me" }
-      ],
-      parents: ['hi', '123']
-    });
-    electron.send('S3-UploadSuccessful', {
-      parents: ['hi', '123'],
-      filename: '123.txt'
-    })
-
-    expect(service.getCachedItems('hi/123').length).toBe(4);
-  }));
-  it('should add to cached items on S3-UploadSuccessful without previous S3-ObjectListed', inject([S3Service], (service: S3Service) => {
-    service.init();
-    electron.send('S3-UploadSuccessful', {
-      parents: ['hi', '123'],
-      filename: '123.txt'
-    });
-
-    expect(service.getCachedItems('hi/123').length).toBe(1);
   }));
 });
