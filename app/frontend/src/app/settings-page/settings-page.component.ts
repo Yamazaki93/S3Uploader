@@ -94,7 +94,7 @@ export class SettingsPageComponent extends SubscriptionComponent implements OnIn
     this.analytics.changeOpt(optIn);
   }
   openDataCollectionSupplement() {
-    this.electron.send('Application-OpenSecondary', {address: '../app/frontend/dist/data.html'});
+    this.electron.send('Application-OpenSecondary', {address: 'data.html'});
   }
   openIssuesPage() {
     this.electron.send('Application-OpenExternal', {address: 'https://github.com/Yamazaki93/s3uploader'})

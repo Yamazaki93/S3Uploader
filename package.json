@@ -15,21 +15,45 @@
   "main": "./dist/main.js",
   "scripts": {
     "build": "tsc --inlineSourceMap false",
+    "build-prod": "tsc --inlineSourceMap false --sourceMap false",
     "watch": "tsc -w",
     "build-tests": "rimraf app/tests/dist && tsc -p app/tests",
     "test": "npm run build && npm run build-tests && mocha --timeout 20000 \"./app/tests/dist/**/*.js\"",
     "test:unit": "npm run build && npm run build-tests && mocha --timeout 20000 \"./app/tests/dist/tests/unit/*.js\"",
-    "test:ci": "npm run build && npm run build-tests && mocha --reporter mocha-jenkins-reporter --timeout 20000 \"./app/tests/dist/tests/unit/*.js\"",
+    "test:ci": "npm run build && npm run build-tests && mocha --reporter mocha-jenkins-reporter --timeout 20000 \"./app/tests/dist/tests/unit/**/*.js\"",
     "test:all": "npm run build && npm run build-tests && mocha -R mocha-jenkins-reporter --timeout 20000 \"./app/tests/dist/**/*.js\"",
     "test:one": "npm run build && npm run build-tests && mocha --watch -u bdd \"./app/tests/dist/**/*.js\"",
     "lint": "tslint -c tslint.json -p tsconfig.json",
     "start": "npm run build && electron ./dist/main.js",
     "postinstall": "electron-builder install-app-deps",
-    "dist": "electron-builder --publish never"
+    "dist": "npm run build && electron-builder --publish never"
   },
   "build": {
     "appId": "com.rhodiumcode.s3uploader",
     "productName": "S3Uploader",
+    "files": [
+      "**/*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme}",
+      "!**/node_modules/*/{test,__tests__,tests,powered-test,example,examples}",
+      "!**/node_modules/*.d.ts",
+      "!**/node_modules/.bin",
+      "!**/*.{iml,o,hprof,orig,pyc,pyo,rbc,swp,csproj,sln,xproj}",
+      "!.editorconfig",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,.gitignore,.gitattributes}",
+      "!**/{__pycache__,thumbs.db,.flowconfig,.idea,.vs,.nyc_output}",
+      "!**/{appveyor.yml,.travis.yml,circle.yml}",
+      "!**/{npm-debug.log,yarn.lock,.yarn-integrity,.yarn-metadata.json}",
+      "!dist-electron",
+      "!app",
+      "!*.json",
+      "!build.ps1",
+      "!README.md",
+      "!yarn.lock",
+      "!Jenkinsfile",
+      "!misc",
+      "!.vscode"
+    ],
     "directories": {
       "buildResources": "build",
       "output": "dist-electron"
@@ -63,6 +87,7 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "electron": "2.0.8",
+    "electron-builder": "^20.39.0",
     "electron-chromedriver": "^3.0.0-beta.1",
     "mocha": "^5.2.0",
     "mocha-jenkins-reporter": "^0.4.1",
@@ -73,10 +98,10 @@
   },
   "dependencies": {
     "aws-sdk": "^2.334.0",
-    "axios": "^0.18.0",
+    "axios": "^0.19.0",
     "electron-google-analytics": "^0.1.0",
-    "electron-log": "^2.2.17",
-    "electron-updater": "^3.1.6",
+    "electron-log": "^3.0.1",
+    "electron-updater": "^4.0.0",
     "sinon": "^7.0.0",
     "uuid": "^3.3.2"
   }

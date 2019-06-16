@@ -25,6 +25,8 @@ let histories: HistoryStorage;
 let updater: UpdaterService;
 let analytics: AnalyticsService;
 
+const DEBUG = process.mainModule.filename.indexOf('app.asar') === -1;
+
 ipcMain.on('Application-Initialize', (event: string, arg: any) => {
     initializeApp();
 });
@@ -47,13 +49,26 @@ function openSecondaryWindow(address: string) {
         width: 800,
     });
     aboutWindow.setMenu(null);
-    aboutWindow.loadURL(url.format({
-        pathname: path.join(__dirname, address),
-        protocol: "file:",
-        slashes: true,
-    }));
+    aboutWindow.loadURL(formatUrl(address));
 }
 
+function formatUrl(relativeUrl: string) {
+    let urlPath = "";
+    if (DEBUG) {
+        urlPath = url.format({
+            pathname: path.join(__dirname, `../app/frontend/dist/${relativeUrl}`),
+            protocol: "file:",
+            slashes: true,
+        });
+    } else {
+        urlPath = url.format({
+            pathname: path.join(__dirname, `./frontend/dist/${relativeUrl}`),
+            protocol: "file:",
+            slashes: true,
+        });
+    }
+    return urlPath;
+}
 
 function initializeApp() {
     settings.initialize(mainWindow);
@@ -75,11 +90,7 @@ function createWindow() {
 
     //   const mainMenu = Menu.buildFromTemplate(MainMenuBuilder.buildMenu());
     //   Menu.setApplicationMenu(mainMenu);
-    mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, "../app/frontend/dist/index.html"),
-        protocol: "file:",
-        slashes: true,
-    }));
+    mainWindow.loadURL(formatUrl('index.html'));
     mainWindow.maximize();
     // Open the DevTools.
     // mainWindow.webContents.openDevTools();
