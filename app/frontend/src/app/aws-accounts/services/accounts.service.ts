@@ -2,13 +2,14 @@ import { Injectable, EventEmitter } from '@angular/core';
 import { ElectronService } from 'src/app/infrastructure/services/electron.service';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { AWSAccount } from '../aws-account';
+import { IAccount } from '../../../../../model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AccountsService {
 
-  AccountTestResult: EventEmitter<{account: string, success: boolean}> = new EventEmitter<{account: string, success: boolean}>();
+  AccountTestResult: EventEmitter<{ account: string, success: boolean }> = new EventEmitter<{ account: string, success: boolean }>();
   InitializingAccount: EventEmitter<{}> = new EventEmitter();
   Accounts: Observable<AWSAccount[]>
   private _accounts = new BehaviorSubject<AWSAccount[]>([])
@@ -21,11 +22,17 @@ export class AccountsService {
 
   init() {
     this.electron.onCD('Settings-SettingsChanged', (event: string, arg: any) => {
+      // 0.2.0: Settings accounts in settings are deprecated, convert legacy accounts to accounts service
       arg.accounts.forEach(a => {
-        if (this._validAccounts.filter(_ => _.id === a).length === 0) {
-          this.InitializingAccount.emit();
-          this.electron.send('AWS-InitAccount', { account: a });
-        }
+        this.addAccount(a);
+      });
+    });
+    this.electron.onCD('Accounts-AccountAdded', (event: string, arg: IAccount) => {
+      this.electron.send('AWS-InitAccount', { account: arg.id });
+    });
+    this.electron.onCD('Accounts-AccountsLoaded', (event: string, arg: IAccount[]) => {
+      arg.forEach(acc => {
+        this.electron.send('AWS-InitAccount', { account: acc.id });
       });
     });
     this.electron.onCD('AWS-AccountInitialized', (event: string, arg: any) => {
@@ -47,20 +54,20 @@ export class AccountsService {
       });
     });
   }
-  
-  testAccount(account: string){
-    this.electron.send('AWS-TestAccount', {account: account});
+
+  testAccount(account: string, url: string) {
+    this.electron.send('AWS-TestAccount', { account: account, url: url });
   }
 
-  openAWSCredentialHelp(){
-    this.electron.send('Application-OpenExternal', {address: "https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/loading-node-credentials-shared.html"});
+  openAWSCredentialHelp() {
+    this.electron.send('Application-OpenExternal', { address: "https://docs.aws.amazon.com/sdk-for-javascript/v2/developer-guide/loading-node-credentials-shared.html" });
   }
 
   openAWSS3Pricing() {
-    this.electron.send('Application-OpenExternal', {address: 'https://aws.amazon.com/s3/pricing/'});
+    this.electron.send('Application-OpenExternal', { address: 'https://aws.amazon.com/s3/pricing/' });
   }
 
-  addAccount(account: string){
-    this.electron.send('Settings-AddAccount', {account: account});    
+  addAccount(account: string, url = "") {
+    this.electron.send('Accounts-AddAccount', { id: account, url: url });
   }
 }

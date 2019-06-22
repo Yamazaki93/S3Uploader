@@ -14,10 +14,12 @@ import { AnalyticsService } from "./analytics";
 let homeDir = os.homedir();
 let appDir = homeDir + "/S3Uploder/";
 import {GlobalEnv} from './environments/environment';
+import { AccountsService } from "./accounts";
 
 let mainWindow: Electron.BrowserWindow;
 let settings: SettingsService;
 let aws: AWSService;
+let accounts: AccountsService;
 let s3: S3Service;
 let tracking: RequestTracking;
 let jobs: JobManager;
@@ -71,6 +73,7 @@ function formatUrl(relativeUrl: string) {
 }
 
 function initializeApp() {
+    accounts.initialize(mainWindow);
     settings.initialize(mainWindow);
     tracking.initialize(mainWindow);
     aws.initialize(mainWindow);
@@ -115,6 +118,7 @@ app.on("ready", () => {
     histories = new HistoryStorage(appDir);
     updater = new UpdaterService(appDir);
     analytics = new AnalyticsService(GlobalEnv.VERSION, GlobalEnv.GA_TRACKING_ID);
+    accounts = new AccountsService(appDir);
     createWindow();
 });
 

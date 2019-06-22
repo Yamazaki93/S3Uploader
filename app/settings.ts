@@ -4,8 +4,6 @@ import { ipcMain, dialog, app, BrowserWindow } from 'electron';
 
 export class SettingsService {
 
-    public currentAccount: { id: string, email: string, url: string };
-
     private window: Electron.BrowserWindow;
     private appDir: string;
     private settingsFile: string;
@@ -25,9 +23,6 @@ export class SettingsService {
         this.settings = {};
 
         if (ipcMain) {
-            ipcMain.on('Settings-AddAccount', (event: string, arg: any) => {
-                this.addAccount(arg.account);
-            });
             ipcMain.on('Settings-BrowseDownloadPath', (event: string, arg: any) => {
                 this.browseDownloadPath();
             });
@@ -58,15 +53,6 @@ export class SettingsService {
         this.settings[key] = value;
         this.save();
         this.window.webContents.send('Settings-SettingsChanged', this.settings);
-    }
-
-    public addAccount(account: string) {
-        let accounts = (this.settings.accounts as string[]);
-        if (accounts.indexOf(account) === -1) {
-            accounts.push(account);
-            this.save();
-            this.window.webContents.send('Settings-SettingsChanged', this.settings);
-        }
     }
 
     public browseDownloadPath() {

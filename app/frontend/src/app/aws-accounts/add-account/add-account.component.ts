@@ -27,6 +27,7 @@ export class AddAccountComponent extends SubscriptionComponent implements OnInit
   toClose = new EventEmitter();
   loading = false;
   private name = "";
+  private url = "";
   private valid = false;
   private tested = false;
   constructor(
@@ -56,7 +57,7 @@ export class AddAccountComponent extends SubscriptionComponent implements OnInit
   private testAccount() {
     if (this.name) {
       this.loading = true;
-      this.accounts.testAccount(this.name);
+      this.accounts.testAccount(this.name, this.url);
     }
   }
 
