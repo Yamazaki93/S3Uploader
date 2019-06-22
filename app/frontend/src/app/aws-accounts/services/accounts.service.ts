@@ -1,7 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { ElectronService } from 'src/app/infrastructure/services/electron.service';
 import { Observable, BehaviorSubject } from 'rxjs';
-import { AWSAccount } from '../aws-account';
 import { IAccount } from '../../../../../model';
 
 @Injectable({
@@ -11,9 +10,9 @@ export class AccountsService {
 
   AccountTestResult: EventEmitter<{ account: string, success: boolean }> = new EventEmitter<{ account: string, success: boolean }>();
   InitializingAccount: EventEmitter<{}> = new EventEmitter();
-  Accounts: Observable<AWSAccount[]>
-  private _accounts = new BehaviorSubject<AWSAccount[]>([])
-  private _validAccounts: AWSAccount[] = []
+  Accounts: Observable<IAccount[]>
+  private _accounts = new BehaviorSubject<IAccount[]>([])
+  private _validAccounts: IAccount[] = []
   constructor(
     private electron: ElectronService
   ) {
@@ -28,35 +27,33 @@ export class AccountsService {
       });
     });
     this.electron.onCD('Accounts-AccountAdded', (event: string, arg: IAccount) => {
-      this.electron.send('AWS-InitAccount', { account: arg.id });
+      this.electron.send('AWS-InitAccount', arg);
     });
     this.electron.onCD('Accounts-AccountsLoaded', (event: string, arg: IAccount[]) => {
       arg.forEach(acc => {
-        this.electron.send('AWS-InitAccount', { account: acc.id });
+        this.electron.send('AWS-InitAccount', acc);
       });
     });
-    this.electron.onCD('AWS-AccountInitialized', (event: string, arg: any) => {
-      this._validAccounts.push({
-        id: arg.account
-      });
+    this.electron.onCD('AWS-AccountInitialized', (event: string, arg: IAccount) => {
+      this._validAccounts.push(arg);
       this._accounts.next(this._validAccounts);
     });
-    this.electron.onCD('AWS-CredentialFound', (event: string, arg: any) => {
+    this.electron.onCD('AWS-CredentialFound', (event: string, arg: IAccount) => {
       this.AccountTestResult.emit({
-        account: arg.account,
+        account: arg.id,
         success: true
       });
     });
-    this.electron.onCD('AWS-CredentialNotFound', (event: string, arg: any) => {
+    this.electron.onCD('AWS-CredentialNotFound', (event: string, arg: IAccount) => {
       this.AccountTestResult.emit({
-        account: arg.account,
+        account: arg.id,
         success: false
       });
     });
   }
 
   testAccount(account: string, url: string) {
-    this.electron.send('AWS-TestAccount', { account: account, url: url });
+    this.electron.send('AWS-TestAccount', { id: account, url: url });
   }
 
   openAWSCredentialHelp() {

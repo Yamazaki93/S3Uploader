@@ -2,7 +2,7 @@
   <div class="card-container">
     <div class="card text-center" style="width: 70rem;">
       <div class="card-body smooth">
-        <h2 class="card-title">Add AWS Account</h2>
+        <h2 class="card-title">Add Account</h2>
         <div class="close-container">
           <a class="close-btn" (click)="close()">
             <i class="ion-ios-close"></i>
@@ -16,8 +16,8 @@
                 <input type="text" name="account-name" class="form-control form-control-alternative"
                   [class.is-valid]="!loading && tested && valid" [class.is-invalid]="!loading && tested && !valid"
                   placeholder="Account Name" [(ngModel)]="name" (input)="onTextChange()">
-                <input type="text" name="url-name" class="form-control form-control-alternative"
-                  [class.is-valid]="!loading && tested && valid" [class.is-invalid]="!loading && tested && !valid"
+                <input type="text" name="url-name" class="form-control form-control-alternative mt-1"
+                  [class.is-valid]="!loading && tested && valid && url" [class.is-invalid]="!loading && tested && !valid && url"
                   placeholder="Custom URL (Optional)" [(ngModel)]="url" (input)="onTextChange()">
                 <div class="valid-feedback">
                   Credential found

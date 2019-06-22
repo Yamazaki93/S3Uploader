@@ -3,11 +3,11 @@ import { TreeNode, TreeNodeType, AccountNode, BucketNode, FolderNode, FileNode }
 import { AccountsService } from 'src/app/aws-accounts/services/accounts.service';
 import { SubscriptionComponent } from 'src/app/infrastructure/subscription-component';
 import { S3Service } from 'src/app/aws-s3/services/s3.service';
-import { AWSAccount } from 'src/app/aws-accounts/aws-account';
 import { S3Item } from 'src/app/aws-s3/s3-item';
 import { SelectionService } from '../services/selection.service';
 import { AnalyticsTracked } from 'src/app/infrastructure/analytics-tracked';
 import { AnalyticsService } from 'src/app/infrastructure/services/analytics.service';
+import { IAccount } from '../../../../../model';
 
 @Component({
   selector: 'app-tree-view',
@@ -119,7 +119,7 @@ export class TreeViewComponent extends SubscriptionComponent implements OnInit {
     return node;
   }
 
-  private addAccount(a: AWSAccount) {
+  private addAccount(a: IAccount) {
     let node = new AccountNode(a.id);
     this.rootNodes.push(node);
     node.refresh(this.s3Service);

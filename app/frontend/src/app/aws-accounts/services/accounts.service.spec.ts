@@ -66,7 +66,7 @@ describe('AccountsService', () => {
   }));
 
   it('should send AWS-TestAccount on testAccount', inject([AccountsService], (service: AccountsService) => {
-    service.testAccount('hi');
+    service.testAccount('hi', "");
 
     expect(electron.messageWasSent('AWS-TestAccount')).toBeTruthy();
   }));
