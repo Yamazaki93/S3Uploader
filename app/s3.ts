@@ -8,6 +8,7 @@ import os = require('os');
 import path = require('path');
 import { AWSError } from "aws-sdk";
 import { JobManager } from "./job-manager";
+import { IAccount } from "./model";
 let defaultDownloadLocation = path.join(os.homedir(), 'Downloads');
 
 AWS.config.apiVersions = {
@@ -19,9 +20,9 @@ export class S3Service implements IRequestTracked {
     private window: BrowserWindow;
     private jobs: JobManager;
     constructor() {
-        ipcMain.on('S3-ListBuckets', (event: string, arg: any) => {
-            this.listBuckets(arg.account).then((result) => {
-                this.window.webContents.send('S3-BucketsListed', { account: arg.account, buckets: result.Buckets });
+        ipcMain.on('S3-ListBuckets', (event: string, arg: IAccount) => {
+            this.listBuckets(arg).then((result) => {
+                this.window.webContents.send('S3-BucketsListed', { account: arg, buckets: result.Buckets });
             });
         });
         ipcMain.on('S3-ListObjects', (event: string, arg: any) => {
@@ -70,7 +71,8 @@ export class S3Service implements IRequestTracked {
 
     private bulkUpload(files: Array<{
         jobID: string, account: string, bucket: string, filePath: string, newPath: string,
-    }>,                location: string[]) {
+        // tslint:disable-next-line:align
+    }>, location: string[]) {
         let jobs: Array<Promise<any>> = [];
         files.forEach((f) => {
             let file = fs.readFileSync(f.filePath);
@@ -93,9 +95,9 @@ export class S3Service implements IRequestTracked {
             );
         });
         Promise.all(jobs).then(() => {
-            this.window.webContents.send('S3-BulkUploadCompleted', {parents: this.pruneParentsArray(location)});
+            this.window.webContents.send('S3-BulkUploadCompleted', { parents: this.pruneParentsArray(location) });
         }).catch((err) => {
-            this.window.webContents.send('S3-BulkUploadFailed',  {parents: this.pruneParentsArray(location)});
+            this.window.webContents.send('S3-BulkUploadFailed', { parents: this.pruneParentsArray(location) });
         });
     }
 
@@ -111,11 +113,29 @@ export class S3Service implements IRequestTracked {
         });
     }
 
+    private createS3Instance(acc: IAccount): AWS.S3 {
+        let s3: AWS.S3;
+        if (acc.url) {
+            s3 = new AWS.S3({
+                endpoint: acc.url,
+                credentials: new AWS.SharedIniFileCredentials({
+                    profile: acc.id,
+                }),
+            });
+        } else {
+            s3 = new AWS.S3({
+                credentials: new AWS.SharedIniFileCredentials({
+                    profile: acc.id,
+                }),
+            });
+        }
+        return s3;
+    }
+
     @LogRequest({ type: RequestType.List })
-    private listBuckets(account: string): Promise<ListBucketsOutput> {
+    private listBuckets(account: IAccount): Promise<ListBucketsOutput> {
         let promise = new Promise<ListBucketsOutput>((resolve, reject) => {
-            this.changeCredential(account);
-            let s3 = new AWS.S3();
+            let s3 = this.createS3Instance(account);
             s3.listBuckets((err, data) => {
                 if (err) { reject(err); } else { resolve(data); }
             });

@@ -38,7 +38,7 @@ export class AddAccountComponent extends SubscriptionComponent implements OnInit
 
   ngOnInit() {
     this.recordSubscription(this.accounts.AccountTestResult.subscribe(_ => {
-      if(_.account === this.name) {
+      if (_.account === this.name) {
         this.tested = true;
         this.valid = _.success;
         this.loading = false;
@@ -67,7 +67,7 @@ export class AddAccountComponent extends SubscriptionComponent implements OnInit
   }
 
   private addAccount() {
-    this.accounts.addAccount(this.name);
+    this.accounts.addAccount(this.name, this.url);
     this.toClose.emit();
   }
 }

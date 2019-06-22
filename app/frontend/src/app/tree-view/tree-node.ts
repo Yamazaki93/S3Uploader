@@ -1,6 +1,7 @@
 import { S3Service } from "../aws-s3/services/s3.service";
 import { RequestUploadService } from "../aws-s3/services/request-upload.service";
 import { UploadItem } from "../aws-s3/upload-item";
+import { IAccount } from "../../../../model";
 
 export interface TreeNode {
     name?: string;
@@ -40,8 +41,10 @@ export abstract class S3ActionNode implements TreeNode {
 
 export class AccountNode extends S3ActionNode {
     enumerated = true;
-    constructor(n: string) {
-        super(n, TreeNodeType.Account);
+    private url: string;
+    constructor(acc: IAccount) {
+        super(acc.id, TreeNodeType.Account);
+        this.url = acc.url;
     }
     get path() {
         return this.name;
@@ -49,7 +52,10 @@ export class AccountNode extends S3ActionNode {
     refresh(service: S3Service) {
         if (service) {
             this.busy = true;
-            service.listBuckets(this.name);
+            service.listBuckets({
+                id: this.name,
+                url: this.url,
+            });
         }
     }
 }

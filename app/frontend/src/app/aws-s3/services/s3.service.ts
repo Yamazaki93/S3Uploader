@@ -4,6 +4,7 @@ import { S3Item } from '../s3-item';
 import * as uuid from 'uuid';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AnalyticsService } from 'src/app/infrastructure/services/analytics.service';
+import { IAccount } from '../../../../../model';
 
 @Injectable({
   providedIn: 'root'
@@ -33,7 +34,7 @@ export class S3Service {
         });
       });
       this.ItemsEnumerated.emit({
-        parents: [arg.account],
+        parents: [arg.account.id],
         items: buckets
       });
     });
@@ -106,8 +107,8 @@ export class S3Service {
     }
   }
 
-  listBuckets(account: string) {
-    this.electron.send('S3-ListBuckets', { account: account });
+  listBuckets(account: IAccount) {
+    this.electron.send('S3-ListBuckets', account);
   }
   listObjects(account: string, bucket: string, prefix = "") {
     this.electron.send('S3-ListObjects', { account: account, bucket: bucket, prefix: prefix });

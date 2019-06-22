@@ -120,12 +120,12 @@ export class TreeViewComponent extends SubscriptionComponent implements OnInit {
   }
 
   private addAccount(a: IAccount) {
-    let node = new AccountNode(a.id);
+    let node = new AccountNode(a);
     this.rootNodes.push(node);
     node.refresh(this.s3Service);
   }
 
-  private listAccountBuckets(a: string) {
+  private listAccountBuckets(a: IAccount) {
     this.s3Service.listBuckets(a);
   }
 
