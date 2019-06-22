@@ -12,7 +12,7 @@ import { IAccount } from '../../../../../model';
 export class S3Service {
 
   RefreshingObjects: EventEmitter<{ parents: string[] }> = new EventEmitter<{ parents: string[] }>();
-  ItemsEnumerated: EventEmitter<{ parents: string[], items: S3Item[] }> = new EventEmitter<{ parents: string[], items: S3Item[] }>();
+  ItemsEnumerated: EventEmitter<{ account: IAccount, parents: string[], items: S3Item[] }> = new EventEmitter<{ account: IAccount, parents: string[], items: S3Item[] }>();
   ItemAdded: EventEmitter<{ parents: string[], item: S3Item }> = new EventEmitter<{ parents: string[], item: S3Item }>();
   DownloadPath: Observable<string>;
   private _cachedItems: { [key: string]: S3Item[] } = {}
@@ -34,6 +34,7 @@ export class S3Service {
         });
       });
       this.ItemsEnumerated.emit({
+        account: arg.account,
         parents: [arg.account.id],
         items: buckets
       });
@@ -69,12 +70,14 @@ export class S3Service {
       }
       this._cachedItems[arg.parents.join('/')] = items;
       this.ItemsEnumerated.emit({
+        account: arg.account,
         parents: arg.parents,
         items: items
       });
     });
     this.electron.onCD('S3-OperationFailed', (event: string, arg: any) => {
       this.ItemsEnumerated.emit({
+        account: arg.account,
         parents: arg.parents,
         items: []
       });
@@ -84,11 +87,11 @@ export class S3Service {
     });
     this.electron.onCD('S3-BulkUploadCompleted', (event: string, arg: any) => {
       let params = this.getS3Parameters(arg.parents);
-      this.listObjects(params.account, params.bucket, params.prefix);
+      this.listObjects(arg.account, params.bucket, params.prefix);
     });
     this.electron.onCD('S3-BulkUploadFailed', (event: string, arg: any) => {
       let params = this.getS3Parameters(arg.parents);
-      this.listObjects(params.account, params.bucket, params.prefix);
+      this.listObjects(arg.account, params.bucket, params.prefix);
     });
     this.electron.onCD('Settings-SettingsChanged', (event: string, arg: any) => {
       this._downloadPath.next(arg['download-path']);
@@ -110,7 +113,7 @@ export class S3Service {
   listBuckets(account: IAccount) {
     this.electron.send('S3-ListBuckets', account);
   }
-  listObjects(account: string, bucket: string, prefix = "") {
+  listObjects(account: IAccount, bucket: string, prefix = "") {
     this.electron.send('S3-ListObjects', { account: account, bucket: bucket, prefix: prefix });
   }
 
@@ -134,7 +137,7 @@ export class S3Service {
     });
     this.electron.send('S3-RequestBulkUpload', {
       files: files,
-      parents: [account, bucket].concat(prefix.split('/')) 
+      parents: [account, bucket].concat(prefix.split('/'))
     });
     this.analytics.logEvent('S3', 'RequestBulkUpload');
   }

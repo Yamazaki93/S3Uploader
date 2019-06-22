@@ -61,18 +61,18 @@ export class AccountNode extends S3ActionNode {
 }
 
 export class BucketNode extends S3ActionNode {
-    account = '';
+    account: IAccount;
     enumerated = false;
-    constructor(parent: string, n: string) {
+    constructor(parent: IAccount, n: string) {
         super(n, TreeNodeType.Bucket);
         this.account = parent;
     }
     get path() {
-        return `${this.account}/${this.name}`;
+        return `${this.account.id}/${this.name}`;
     }
     dropAction(service: RequestUploadService, files: UploadItem[]) {
         if (service) {
-            service.requestUpload(this.account, this.name, "", files);
+            service.requestUpload(this.account.id, this.name, "", files);
         }
     }
     refresh(service: S3Service) {
@@ -85,10 +85,10 @@ export class BucketNode extends S3ActionNode {
 
 export class FolderNode extends S3ActionNode {
     prefix = '';
-    account = '';
+    account: IAccount;
     bucket = '';
     enumerated = false;
-    constructor(account: string, bucket: string, prefix: string, n: string) {
+    constructor(account: IAccount, bucket: string, prefix: string, n: string) {
         super(n, TreeNodeType.Folder);
         this.prefix = prefix;
         this.account = account;
@@ -96,14 +96,14 @@ export class FolderNode extends S3ActionNode {
     }
     get path() {
         if (this.prefix) {
-            return `${this.account}/${this.bucket}/${this.prefix}/${this.name}`;
+            return `${this.account.id}/${this.bucket}/${this.prefix}/${this.name}`;
         }
-        return `${this.account}/${this.bucket}/${this.name}`;
+        return `${this.account.id}/${this.bucket}/${this.name}`;
     }
     dropAction(service: RequestUploadService, files: UploadItem[]) {
         if (service) {
             let prefixes = this.prefix ? this.prefix + '/' : ''
-            service.requestUpload(this.account, this.bucket, prefixes + this.name + '/', files);
+            service.requestUpload(this.account.id, this.bucket, prefixes + this.name + '/', files);
         }
     }
     refresh(service: S3Service) {

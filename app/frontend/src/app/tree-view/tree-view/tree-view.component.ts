@@ -47,7 +47,7 @@ export class TreeViewComponent extends SubscriptionComponent implements OnInit {
         node.busy = false;
         node.subItems = [];
         node.subItems = result.items.map(_ => {
-          return this.convertS3ItemToTreeNode(result.parents, _);
+          return this.convertS3ItemToTreeNode(result.account, result.parents, _);
         });
         if(node.subItems.length) {
           this.sortNodes(node.subItems);
@@ -59,7 +59,7 @@ export class TreeViewComponent extends SubscriptionComponent implements OnInit {
       let parent = this.getNode({ subItems: this.rootNodes }, result.parents.slice()).node;
       if (parent) {
         let existing = parent.subItems;
-        let newNode = this.convertS3ItemToTreeNode(result.parents, result.item);
+        let newNode = this.convertS3ItemToTreeNode(result.account, result.parents, result.item);
         if(existing && existing.filter(_ => _.name === newNode.name).length === 0) {
           parent.subItems.push(newNode);
           this.sortNodes(parent.subItems);
@@ -99,17 +99,17 @@ export class TreeViewComponent extends SubscriptionComponent implements OnInit {
     node.expand = false;
   }
 
-  private convertS3ItemToTreeNode(parents: string[], item: S3Item): TreeNode {
+  private convertS3ItemToTreeNode(account: IAccount, parents: string[], item: S3Item): TreeNode {
     let node = {
       name: item.name,
       type: undefined
     }
     if(item.type === 'bucket') {
-      return new BucketNode(parents[0], item.name);
+      return new BucketNode(account, item.name);
     } else if(item.type === 'folder') {
       let prefixes = parents.slice();
       prefixes.splice(0, 2);
-      return new FolderNode(parents[0], parents[1], prefixes.join('/'), item.name);
+      return new FolderNode(account, parents[1], prefixes.join('/'), item.name);
     } else if(item.type ==='file') {
       let prefixes = parents.slice();
       prefixes.splice(0, 2);

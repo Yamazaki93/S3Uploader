@@ -101,15 +101,15 @@ export class S3Service implements IRequestTracked {
         });
     }
 
-    private listObjects(account: string, bucket: string, prefix: string, delimiter = '/') {
-        let parents = [account, bucket].concat(prefix.split('/'));
+    private listObjects(account: IAccount, bucket: string, prefix: string, delimiter = '/') {
+        let parents = [account.id, bucket].concat(prefix.split('/'));
         parents = this.pruneParentsArray(parents);
         this.window.webContents.send('S3-ListingObjects', { parents });
         this.listObjectsReq(account, bucket, prefix, delimiter).then((result) => {
             // tslint:disable-next-line:max-line-length
-            this.window.webContents.send('S3-ObjectListed', { parents, objects: result.Contents, folders: result.CommonPrefixes });
+            this.window.webContents.send('S3-ObjectListed', { account, parents, objects: result.Contents, folders: result.CommonPrefixes });
         }).catch((err) => {
-            this.window.webContents.send('S3-OperationFailed', { parents, error: err });
+            this.window.webContents.send('S3-OperationFailed', { account, parents, error: err });
         });
     }
 
@@ -145,15 +145,14 @@ export class S3Service implements IRequestTracked {
 
     @LogRequest({ type: RequestType.List })
     // tslint:disable-next-line:max-line-length
-    private listObjectsReq(account: string, bucket: string, prefix: string, delimiter = '/'): Promise<ListObjectsOutput> {
+    private listObjectsReq(account: IAccount, bucket: string, prefix: string, delimiter = '/'): Promise<ListObjectsOutput> {
         let promise = new Promise<ListObjectsOutput>((resolve, reject) => {
-            this.changeCredential(account);
             let params = {
                 Bucket: bucket,
                 Prefix: prefix,
                 Delimiter: delimiter,
             };
-            let s3 = new AWS.S3();
+            let s3 = this.createS3Instance(account);
             s3.listObjectsV2(params, (err, data) => {
                 if (err) {
                     reject(err);
