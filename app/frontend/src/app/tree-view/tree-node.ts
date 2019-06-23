@@ -72,7 +72,7 @@ export class BucketNode extends S3ActionNode {
     }
     dropAction(service: RequestUploadService, files: UploadItem[]) {
         if (service) {
-            service.requestUpload(this.account.id, this.name, "", files);
+            service.requestUpload(this.account, this.name, "", files);
         }
     }
     refresh(service: S3Service) {
@@ -103,7 +103,7 @@ export class FolderNode extends S3ActionNode {
     dropAction(service: RequestUploadService, files: UploadItem[]) {
         if (service) {
             let prefixes = this.prefix ? this.prefix + '/' : ''
-            service.requestUpload(this.account.id, this.bucket, prefixes + this.name + '/', files);
+            service.requestUpload(this.account, this.bucket, prefixes + this.name + '/', files);
         }
     }
     refresh(service: S3Service) {
@@ -116,10 +116,10 @@ export class FolderNode extends S3ActionNode {
 }
 
 export class FileNode extends S3ActionNode {
-    account = '';
+    account: IAccount;
     bucket = '';
     key = '';
-    constructor(account: string, bucket: string, key: string, name: string) {
+    constructor(account: IAccount, bucket: string, key: string, name: string) {
         super(name, TreeNodeType.File);
         this.key = key;
         this.account = account;

@@ -4,6 +4,7 @@ import { ConfirmUploadComponent } from '../confirm-upload/confirm-upload.compone
 import { UploadItem } from '../upload-item';
 import { ElectronService } from 'src/app/infrastructure/services/electron.service';
 import { S3Service } from './s3.service';
+import { IAccount } from '../../../../../model';
 
 @Injectable({
   providedIn: 'root'
@@ -22,7 +23,7 @@ export class RequestUploadService {
     });
   }
 
-  requestUpload(account: string, bucket: string, prefix: string, items: UploadItem[]) {
+  requestUpload(account: IAccount, bucket: string, prefix: string, items: UploadItem[]) {
     if (this.toPrompt) {
       let comp = this.dom.appendComponentToBody(ConfirmUploadComponent);
       comp.instance.account = account;

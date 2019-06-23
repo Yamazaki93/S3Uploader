@@ -16,25 +16,27 @@
                 <input type="text" name="account-name" class="form-control form-control-alternative"
                   [class.is-valid]="!loading && tested && valid" [class.is-invalid]="!loading && tested && !valid"
                   placeholder="Account Name" [(ngModel)]="name" (input)="onTextChange()">
+                <small class="form-text text-muted">Enter a name that matches one of the access key section headings in
+                  your .aws credential file. To learn more about AWS credentials and how to set it up for AWS S3, click
+                  <a href="javascript:void(0)" (click)="openCredentialHelp()">here</a></small>
                 <input type="text" name="url-name" class="form-control form-control-alternative mt-1"
-                  [class.is-valid]="!loading && tested && valid && url" [class.is-invalid]="!loading && tested && !valid && url"
-                  placeholder="Custom URL (Optional)" [(ngModel)]="url" (input)="onTextChange()">
+                  [class.is-valid]="!loading && tested && valid && url"
+                  [class.is-invalid]="!loading && tested && !valid && url" placeholder="Endpoint (Optional)"
+                  [(ngModel)]="url" (input)="onTextChange()">
+                <small class="form-text text-muted">You may enter a custom endpoint host name that points to an AWS S3
+                  compatible service. Such as <code>sfo2.digitaloceanspaces.com</code></small>
                 <div class="valid-feedback">
-                  Credential found
+                  Connection Successful
                 </div>
                 <div class="invalid-feedback">
-                  Credential not found
+                  Connection Failed
                 </div>
-                <small class="form-text text-muted">Enter a name that matches one of the access key section headings in
-                  your .aws credential file. To learn more about AWS credentials and how to set it up, click <a
-                    href="javascript:void(0)" (click)="openCredentialHelp()">here</a></small>
               </div>
             </div>
           </div>
         </form>
         <div *ngIf="!loading && !valid" @ngIfAnimation>
-          <button id="test-btn" class="btn btn-info" [class.disabled]="name === ''" (click)="testAccount()">Find
-            Credential</button>
+          <button id="test-btn" class="btn btn-info" [class.disabled]="name === ''" (click)="testAccount()">Test Account</button>
         </div>
         <div *ngIf="!loading && valid && tested" @ngIfAnimation id="add-account-container">
           <button id="add-account-btn" class="btn btn-info" (click)="addAccount()">Add Account</button>

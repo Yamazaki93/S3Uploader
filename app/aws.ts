@@ -29,32 +29,30 @@ export class AWSService {
     }
 
     private testAccount(account: IAccount): Promise<boolean> {
+        let s3: AWS.S3;
         if (account.url) {
-            let s3 = new AWS.S3({
+            s3 = new AWS.S3({
                 endpoint: account.url,
                 credentials: new AWS.SharedIniFileCredentials({
                     profile: account.id,
                 }),
             });
-            let p = new Promise<boolean>((resolve, reject) => {
-                s3.listBuckets((err, data) => {
-                    if (err) {
-                        resolve(false);
-                    } else {
-                        resolve(true);
-                    }
-                });
-            });
-            return p;
         } else {
-            let credentials = new AWS.SharedIniFileCredentials({
-                profile: account.id,
+            s3 = new AWS.S3({
+                credentials: new AWS.SharedIniFileCredentials({
+                    profile: account.id,
+                }),
             });
-            if (credentials.accessKeyId && credentials.secretAccessKey) {
-                return Promise.resolve(true);
-            } else {
-                return Promise.resolve(false);
-            }
         }
+        let p = new Promise<boolean>((resolve, reject) => {
+            s3.listBuckets((err, data) => {
+                if (err) {
+                    resolve(false);
+                } else {
+                    resolve(true);
+                }
+            });
+        });
+        return p;
     }
 }

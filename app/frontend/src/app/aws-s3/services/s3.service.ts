@@ -117,14 +117,14 @@ export class S3Service {
     this.electron.send('S3-ListObjects', { account: account, bucket: bucket, prefix: prefix });
   }
 
-  requestDownload(account: string, bucket: string, key: string): string {
+  requestDownload(account: IAccount, bucket: string, key: string): string {
     let id = uuid.v4();
     this.electron.send('S3-RequestDownload', { jobID: id, account: account, bucket: bucket, key: key, saveTo: this._downloadPath.value });
     this.analytics.logEvent('S3', 'RequestDownload');
     return id.toString();
   }
 
-  requestBulkUpload(account: string, bucket: string, prefix: string, items: Array<{ filePath: string, newPath: string }>) {
+  requestBulkUpload(account: IAccount, bucket: string, prefix: string, items: Array<{ filePath: string, newPath: string }>) {
     let files = items.map(item => {
       let id = uuid.v4();
       return {
@@ -137,7 +137,7 @@ export class S3Service {
     });
     this.electron.send('S3-RequestBulkUpload', {
       files: files,
-      parents: [account, bucket].concat(prefix.split('/'))
+      parents: [account.id, bucket].concat(prefix.split('/'))
     });
     this.analytics.logEvent('S3', 'RequestBulkUpload');
   }

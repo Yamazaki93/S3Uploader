@@ -114,7 +114,7 @@ export class TreeViewComponent extends SubscriptionComponent implements OnInit {
       let prefixes = parents.slice();
       prefixes.splice(0, 2);
       prefixes.push(item.name);
-      return new FileNode(parents[0], parents[1], prefixes.join('/'), item.name);
+      return new FileNode(account, parents[1], prefixes.join('/'), item.name);
     }
     return node;
   }

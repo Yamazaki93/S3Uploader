@@ -91,7 +91,7 @@ export class FolderBrowserComponent extends SubscriptionComponent implements OnI
       event.preventDefault();
       event.stopPropagation();
       let params = this.getS3Parameters();
-      this.s3.requestDownload(params.account, params.bucket, params.prefix + item.name);
+      this.s3.requestDownload(this.account, params.bucket, params.prefix + item.name);
     }
   }
 
@@ -125,7 +125,7 @@ export class FolderBrowserComponent extends SubscriptionComponent implements OnI
           items = items.concat(r);
         });
         let params = this.getS3Parameters();
-        this.upload.requestUpload(params.account, params.bucket, params.prefix, items);
+        this.upload.requestUpload(this.account, params.bucket, params.prefix, items);
       })
     }
     event.preventDefault();

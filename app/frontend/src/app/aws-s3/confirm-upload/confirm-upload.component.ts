@@ -1,6 +1,7 @@
 import { Component, OnInit, EventEmitter } from '@angular/core';
 import { S3Service } from '../services/s3.service';
 import { UploadItem } from '../upload-item';
+import { IAccount } from '../../../../../model';
 
 @Component({
   selector: 'app-confirm-upload',
@@ -13,7 +14,7 @@ import { UploadItem } from '../upload-item';
 export class ConfirmUploadComponent implements OnInit {
 
   isValid = true;
-  account = "";
+  account: IAccount;
   bucket = "";
   prefix = "";
   promptSetting = true;
