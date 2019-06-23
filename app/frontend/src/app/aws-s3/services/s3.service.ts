@@ -16,6 +16,7 @@ export class S3Service {
   ItemAdded: EventEmitter<{ parents: string[], item: S3Item }> = new EventEmitter<{ parents: string[], item: S3Item }>();
   DownloadPath: Observable<string>;
   private _cachedItems: { [key: string]: S3Item[] } = {}
+  private _cachedAccounts: { [key: string]: IAccount } = {}
   private _downloadPath = new BehaviorSubject('');
   constructor(
     private electron: ElectronService,
@@ -40,7 +41,7 @@ export class S3Service {
       });
     });
     this.electron.onCD('S3-ObjectListed', (event: string, arg: any) => {
-      let items = []
+      let items: S3Item[] = []
       if (arg.objects) {
         items = arg.objects.map(_ => {
           return {
@@ -69,6 +70,7 @@ export class S3Service {
         }));
       }
       this._cachedItems[arg.parents.join('/')] = items;
+      this._cachedAccounts[arg.parents[0]] = arg.account;
       this.ItemsEnumerated.emit({
         account: arg.account,
         parents: arg.parents,
@@ -108,6 +110,10 @@ export class S3Service {
     } else {
       return [];
     }
+  }
+  getCachedAccount(key: string): IAccount {
+    let acc = this._cachedAccounts[key];
+    return acc;
   }
 
   listBuckets(account: IAccount) {

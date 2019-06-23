@@ -44,6 +44,7 @@ export class FolderBrowserComponent extends SubscriptionComponent implements OnI
       let segmentNames = segments.join('/');
       this.currentPath = segmentNames;
       this.items = this.s3.getCachedItems(this.currentPath);
+      this.account = this.s3.getCachedAccount(segments[0].path);
     }));
     this.recordSubscription(this.s3.RefreshingObjects.subscribe(res => {
       let segmentNames = res.parents.join('/');
@@ -53,7 +54,6 @@ export class FolderBrowserComponent extends SubscriptionComponent implements OnI
     }));
     this.recordSubscription(this.s3.ItemsEnumerated.subscribe(result => {
       this.account = result.account;
-      console.log(result);
       let parents = result.parents.slice();
       let parentPath = parents.join('/');
       if (parentPath === this.currentPath) {
