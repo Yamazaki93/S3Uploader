@@ -8,6 +8,7 @@ import { collectFiles } from 'src/app/collectfiles';
 import { RequestUploadService } from 'src/app/aws-s3/services/request-upload.service';
 import { AnalyticsTracked } from 'src/app/infrastructure/analytics-tracked';
 import { AnalyticsService } from 'src/app/infrastructure/services/analytics.service';
+import { IAccount } from '../../../../../model';
 
 @Component({
   selector: 'app-folder-browser',
@@ -26,6 +27,7 @@ export class FolderBrowserComponent extends SubscriptionComponent implements OnI
   private dragCount = 0;
   private items = [];
   private currentPath = "";
+  private account: IAccount;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
@@ -50,6 +52,8 @@ export class FolderBrowserComponent extends SubscriptionComponent implements OnI
       }
     }));
     this.recordSubscription(this.s3.ItemsEnumerated.subscribe(result => {
+      this.account = result.account;
+      console.log(result);
       let parents = result.parents.slice();
       let parentPath = parents.join('/');
       if (parentPath === this.currentPath) {
@@ -65,7 +69,7 @@ export class FolderBrowserComponent extends SubscriptionComponent implements OnI
 
   refresh() {
     let params = this.getS3Parameters();
-    this.s3.listObjects(params.account, params.bucket, params.prefix);
+    this.s3.listObjects(this.account, params.bucket, params.prefix);
   }
 
   onClick(item: S3Item, event: any) {
@@ -75,7 +79,7 @@ export class FolderBrowserComponent extends SubscriptionComponent implements OnI
       let newPath = this.currentPath + '/' + item.name;
       this.router.navigateByUrl(`/browse/${newPath}`);
       this.selection.selectItem(newPath);
-    } else if(item.type === 'file') {
+    } else if (item.type === 'file') {
       event.preventDefault();
       event.stopPropagation();
       this.selectedFile = item;
@@ -87,7 +91,7 @@ export class FolderBrowserComponent extends SubscriptionComponent implements OnI
       event.preventDefault();
       event.stopPropagation();
       let params = this.getS3Parameters();
-      this.s3.requestDownload(params.account, params.bucket, params.prefix + item.name);
+      this.s3.requestDownload(this.account, params.bucket, params.prefix + item.name);
     }
   }
 
@@ -121,7 +125,7 @@ export class FolderBrowserComponent extends SubscriptionComponent implements OnI
           items = items.concat(r);
         });
         let params = this.getS3Parameters();
-        this.upload.requestUpload(params.account, params.bucket, params.prefix, items);
+        this.upload.requestUpload(this.account, params.bucket, params.prefix, items);
       })
     }
     event.preventDefault();

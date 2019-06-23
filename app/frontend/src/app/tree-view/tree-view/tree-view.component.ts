@@ -3,11 +3,11 @@ import { TreeNode, TreeNodeType, AccountNode, BucketNode, FolderNode, FileNode }
 import { AccountsService } from 'src/app/aws-accounts/services/accounts.service';
 import { SubscriptionComponent } from 'src/app/infrastructure/subscription-component';
 import { S3Service } from 'src/app/aws-s3/services/s3.service';
-import { AWSAccount } from 'src/app/aws-accounts/aws-account';
 import { S3Item } from 'src/app/aws-s3/s3-item';
 import { SelectionService } from '../services/selection.service';
 import { AnalyticsTracked } from 'src/app/infrastructure/analytics-tracked';
 import { AnalyticsService } from 'src/app/infrastructure/services/analytics.service';
+import { IAccount } from '../../../../../model';
 
 @Component({
   selector: 'app-tree-view',
@@ -47,7 +47,7 @@ export class TreeViewComponent extends SubscriptionComponent implements OnInit {
         node.busy = false;
         node.subItems = [];
         node.subItems = result.items.map(_ => {
-          return this.convertS3ItemToTreeNode(result.parents, _);
+          return this.convertS3ItemToTreeNode(result.account, result.parents, _);
         });
         if(node.subItems.length) {
           this.sortNodes(node.subItems);
@@ -59,7 +59,7 @@ export class TreeViewComponent extends SubscriptionComponent implements OnInit {
       let parent = this.getNode({ subItems: this.rootNodes }, result.parents.slice()).node;
       if (parent) {
         let existing = parent.subItems;
-        let newNode = this.convertS3ItemToTreeNode(result.parents, result.item);
+        let newNode = this.convertS3ItemToTreeNode(result.account, result.parents, result.item);
         if(existing && existing.filter(_ => _.name === newNode.name).length === 0) {
           parent.subItems.push(newNode);
           this.sortNodes(parent.subItems);
@@ -99,33 +99,33 @@ export class TreeViewComponent extends SubscriptionComponent implements OnInit {
     node.expand = false;
   }
 
-  private convertS3ItemToTreeNode(parents: string[], item: S3Item): TreeNode {
+  private convertS3ItemToTreeNode(account: IAccount, parents: string[], item: S3Item): TreeNode {
     let node = {
       name: item.name,
       type: undefined
     }
     if(item.type === 'bucket') {
-      return new BucketNode(parents[0], item.name);
+      return new BucketNode(account, item.name);
     } else if(item.type === 'folder') {
       let prefixes = parents.slice();
       prefixes.splice(0, 2);
-      return new FolderNode(parents[0], parents[1], prefixes.join('/'), item.name);
+      return new FolderNode(account, parents[1], prefixes.join('/'), item.name);
     } else if(item.type ==='file') {
       let prefixes = parents.slice();
       prefixes.splice(0, 2);
       prefixes.push(item.name);
-      return new FileNode(parents[0], parents[1], prefixes.join('/'), item.name);
+      return new FileNode(account, parents[1], prefixes.join('/'), item.name);
     }
     return node;
   }
 
-  private addAccount(a: AWSAccount) {
-    let node = new AccountNode(a.id);
+  private addAccount(a: IAccount) {
+    let node = new AccountNode(a);
     this.rootNodes.push(node);
     node.refresh(this.s3Service);
   }
 
-  private listAccountBuckets(a: string) {
+  private listAccountBuckets(a: IAccount) {
     this.s3Service.listBuckets(a);
   }
 

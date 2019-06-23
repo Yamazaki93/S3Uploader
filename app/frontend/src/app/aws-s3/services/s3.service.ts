@@ -4,6 +4,7 @@ import { S3Item } from '../s3-item';
 import * as uuid from 'uuid';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { AnalyticsService } from 'src/app/infrastructure/services/analytics.service';
+import { IAccount } from '../../../../../model';
 
 @Injectable({
   providedIn: 'root'
@@ -11,7 +12,7 @@ import { AnalyticsService } from 'src/app/infrastructure/services/analytics.serv
 export class S3Service {
 
   RefreshingObjects: EventEmitter<{ parents: string[] }> = new EventEmitter<{ parents: string[] }>();
-  ItemsEnumerated: EventEmitter<{ parents: string[], items: S3Item[] }> = new EventEmitter<{ parents: string[], items: S3Item[] }>();
+  ItemsEnumerated: EventEmitter<{ account: IAccount, parents: string[], items: S3Item[] }> = new EventEmitter<{ account: IAccount, parents: string[], items: S3Item[] }>();
   ItemAdded: EventEmitter<{ parents: string[], item: S3Item }> = new EventEmitter<{ parents: string[], item: S3Item }>();
   DownloadPath: Observable<string>;
   private _cachedItems: { [key: string]: S3Item[] } = {}
@@ -33,7 +34,8 @@ export class S3Service {
         });
       });
       this.ItemsEnumerated.emit({
-        parents: [arg.account],
+        account: arg.account,
+        parents: [arg.account.id],
         items: buckets
       });
     });
@@ -68,12 +70,14 @@ export class S3Service {
       }
       this._cachedItems[arg.parents.join('/')] = items;
       this.ItemsEnumerated.emit({
+        account: arg.account,
         parents: arg.parents,
         items: items
       });
     });
     this.electron.onCD('S3-OperationFailed', (event: string, arg: any) => {
       this.ItemsEnumerated.emit({
+        account: arg.account,
         parents: arg.parents,
         items: []
       });
@@ -83,11 +87,11 @@ export class S3Service {
     });
     this.electron.onCD('S3-BulkUploadCompleted', (event: string, arg: any) => {
       let params = this.getS3Parameters(arg.parents);
-      this.listObjects(params.account, params.bucket, params.prefix);
+      this.listObjects(arg.account, params.bucket, params.prefix);
     });
     this.electron.onCD('S3-BulkUploadFailed', (event: string, arg: any) => {
       let params = this.getS3Parameters(arg.parents);
-      this.listObjects(params.account, params.bucket, params.prefix);
+      this.listObjects(arg.account, params.bucket, params.prefix);
     });
     this.electron.onCD('Settings-SettingsChanged', (event: string, arg: any) => {
       this._downloadPath.next(arg['download-path']);
@@ -106,21 +110,21 @@ export class S3Service {
     }
   }
 
-  listBuckets(account: string) {
-    this.electron.send('S3-ListBuckets', { account: account });
+  listBuckets(account: IAccount) {
+    this.electron.send('S3-ListBuckets', account);
   }
-  listObjects(account: string, bucket: string, prefix = "") {
+  listObjects(account: IAccount, bucket: string, prefix = "") {
     this.electron.send('S3-ListObjects', { account: account, bucket: bucket, prefix: prefix });
   }
 
-  requestDownload(account: string, bucket: string, key: string): string {
+  requestDownload(account: IAccount, bucket: string, key: string): string {
     let id = uuid.v4();
     this.electron.send('S3-RequestDownload', { jobID: id, account: account, bucket: bucket, key: key, saveTo: this._downloadPath.value });
     this.analytics.logEvent('S3', 'RequestDownload');
     return id.toString();
   }
 
-  requestBulkUpload(account: string, bucket: string, prefix: string, items: Array<{ filePath: string, newPath: string }>) {
+  requestBulkUpload(account: IAccount, bucket: string, prefix: string, items: Array<{ filePath: string, newPath: string }>) {
     let files = items.map(item => {
       let id = uuid.v4();
       return {
@@ -133,7 +137,7 @@ export class S3Service {
     });
     this.electron.send('S3-RequestBulkUpload', {
       files: files,
-      parents: [account, bucket].concat(prefix.split('/')) 
+      parents: [account.id, bucket].concat(prefix.split('/'))
     });
     this.analytics.logEvent('S3', 'RequestBulkUpload');
   }

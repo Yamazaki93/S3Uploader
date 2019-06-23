@@ -8,6 +8,7 @@ import os = require('os');
 import path = require('path');
 import { AWSError } from "aws-sdk";
 import { JobManager } from "./job-manager";
+import { IAccount } from "./model";
 let defaultDownloadLocation = path.join(os.homedir(), 'Downloads');
 
 AWS.config.apiVersions = {
@@ -19,9 +20,9 @@ export class S3Service implements IRequestTracked {
     private window: BrowserWindow;
     private jobs: JobManager;
     constructor() {
-        ipcMain.on('S3-ListBuckets', (event: string, arg: any) => {
-            this.listBuckets(arg.account).then((result) => {
-                this.window.webContents.send('S3-BucketsListed', { account: arg.account, buckets: result.Buckets });
+        ipcMain.on('S3-ListBuckets', (event: string, arg: IAccount) => {
+            this.listBuckets(arg).then((result) => {
+                this.window.webContents.send('S3-BucketsListed', { account: arg, buckets: result.Buckets });
             });
         });
         ipcMain.on('S3-ListObjects', (event: string, arg: any) => {
@@ -41,7 +42,7 @@ export class S3Service implements IRequestTracked {
         this.jobs = j;
     }
 
-    private downloadFile(jobID: string, account: string, bucket: string, key: string, saveTo = "") {
+    private downloadFile(jobID: string, account: IAccount, bucket: string, key: string, saveTo = "") {
         let r = this.getObject(account, bucket, key);
         let originalPath = path.parse(key);
         let filename = `${originalPath.name}${originalPath.ext}`;
@@ -69,9 +70,16 @@ export class S3Service implements IRequestTracked {
     }
 
     private bulkUpload(files: Array<{
-        jobID: string, account: string, bucket: string, filePath: string, newPath: string,
-    }>,                location: string[]) {
+        jobID: string, account: IAccount, bucket: string, filePath: string, newPath: string,
+        // tslint:disable-next-line:align
+    }>, location: string[]) {
         let jobs: Array<Promise<any>> = [];
+        // TODO: consolidate/reformat files array, they all belong to 1 account anyway
+        // Temporary: just take the first file's account as the result
+        let account: IAccount;
+        if (files.length) {
+            account = files[0].account;
+        }
         files.forEach((f) => {
             let file = fs.readFileSync(f.filePath);
             let filepath = path.parse(f.filePath);
@@ -79,43 +87,62 @@ export class S3Service implements IRequestTracked {
             let r = this.upload(f.account, f.bucket, f.newPath, file);
             // tslint:disable-next-line:max-line-length
             let resultPromise = this.jobs.addManagedUploadJob(f.jobID, 'upload', r.request, filename, f.newPath, f.filePath);
-            let parents = [f.account, f.bucket].concat(f.newPath.split('/'));
+            let parents = [f.account.id, f.bucket].concat(f.newPath.split('/'));
             parents.splice(parents.length - 1, 1);
             parents = this.pruneParentsArray(parents);
             jobs.push(
                 resultPromise.then((_) => {
-                    this.window.webContents.send('S3-UploadSuccessful', { parents, filename });
+                    this.window.webContents.send('S3-UploadSuccessful', { account: f.account, parents, filename });
                     return Promise.resolve(_);
                 }).catch((err) => {
-                    this.window.webContents.send('S3-UploadFailed', { parents, filename });
+                    this.window.webContents.send('S3-UploadFailed', { account: f.account, parents, filename });
                     return Promise.reject(err);
                 }),
             );
         });
         Promise.all(jobs).then(() => {
-            this.window.webContents.send('S3-BulkUploadCompleted', {parents: this.pruneParentsArray(location)});
+            // tslint:disable-next-line:max-line-length
+            this.window.webContents.send('S3-BulkUploadCompleted', { account, parents: this.pruneParentsArray(location) });
         }).catch((err) => {
-            this.window.webContents.send('S3-BulkUploadFailed',  {parents: this.pruneParentsArray(location)});
+            this.window.webContents.send('S3-BulkUploadFailed', { account, parents: this.pruneParentsArray(location) });
         });
     }
 
-    private listObjects(account: string, bucket: string, prefix: string, delimiter = '/') {
-        let parents = [account, bucket].concat(prefix.split('/'));
+    private listObjects(account: IAccount, bucket: string, prefix: string, delimiter = '/') {
+        let parents = [account.id, bucket].concat(prefix.split('/'));
         parents = this.pruneParentsArray(parents);
         this.window.webContents.send('S3-ListingObjects', { parents });
         this.listObjectsReq(account, bucket, prefix, delimiter).then((result) => {
             // tslint:disable-next-line:max-line-length
-            this.window.webContents.send('S3-ObjectListed', { parents, objects: result.Contents, folders: result.CommonPrefixes });
+            this.window.webContents.send('S3-ObjectListed', { account, parents, objects: result.Contents, folders: result.CommonPrefixes });
         }).catch((err) => {
-            this.window.webContents.send('S3-OperationFailed', { parents, error: err });
+            this.window.webContents.send('S3-OperationFailed', { account, parents, error: err });
         });
     }
 
+    private createS3Instance(acc: IAccount): AWS.S3 {
+        let s3: AWS.S3;
+        if (acc.url) {
+            s3 = new AWS.S3({
+                endpoint: acc.url,
+                credentials: new AWS.SharedIniFileCredentials({
+                    profile: acc.id,
+                }),
+            });
+        } else {
+            s3 = new AWS.S3({
+                credentials: new AWS.SharedIniFileCredentials({
+                    profile: acc.id,
+                }),
+            });
+        }
+        return s3;
+    }
+
     @LogRequest({ type: RequestType.List })
-    private listBuckets(account: string): Promise<ListBucketsOutput> {
+    private listBuckets(account: IAccount): Promise<ListBucketsOutput> {
         let promise = new Promise<ListBucketsOutput>((resolve, reject) => {
-            this.changeCredential(account);
-            let s3 = new AWS.S3();
+            let s3 = this.createS3Instance(account);
             s3.listBuckets((err, data) => {
                 if (err) { reject(err); } else { resolve(data); }
             });
@@ -125,15 +152,14 @@ export class S3Service implements IRequestTracked {
 
     @LogRequest({ type: RequestType.List })
     // tslint:disable-next-line:max-line-length
-    private listObjectsReq(account: string, bucket: string, prefix: string, delimiter = '/'): Promise<ListObjectsOutput> {
+    private listObjectsReq(account: IAccount, bucket: string, prefix: string, delimiter = '/'): Promise<ListObjectsOutput> {
         let promise = new Promise<ListObjectsOutput>((resolve, reject) => {
-            this.changeCredential(account);
             let params = {
                 Bucket: bucket,
                 Prefix: prefix,
                 Delimiter: delimiter,
             };
-            let s3 = new AWS.S3();
+            let s3 = this.createS3Instance(account);
             s3.listObjectsV2(params, (err, data) => {
                 if (err) {
                     reject(err);
@@ -153,15 +179,14 @@ export class S3Service implements IRequestTracked {
 
     @LogRequest({ type: RequestType.Get })
     // tslint:disable-next-line:max-line-length
-    private getObject(account: string, bucket: string, key: string): { result: Promise<GetObjectOutput>, request: AWS.Request<GetObjectOutput, AWSError> } {
+    private getObject(account: IAccount, bucket: string, key: string): { result: Promise<GetObjectOutput>, request: AWS.Request<GetObjectOutput, AWSError> } {
         let req;
         let promise = new Promise<GetObjectOutput>((resolve, reject) => {
-            this.changeCredential(account);
             let params = {
                 Bucket: bucket,
                 Key: key,
             };
-            let s3 = new AWS.S3();
+            let s3 = this.createS3Instance(account);
             req = s3.getObject(params, (err, data) => {
                 if (err) {
                     reject(err);
@@ -174,15 +199,14 @@ export class S3Service implements IRequestTracked {
     }
 
     @LogRequest({ type: RequestType.Put })
-    private upload(account: string, bucket: string, key: string, data: Buffer): { request: AWS.S3.ManagedUpload } {
+    private upload(account: IAccount, bucket: string, key: string, data: Buffer): { request: AWS.S3.ManagedUpload } {
         let req;
-        this.changeCredential(account);
         let params = {
             Body: data,
             Bucket: bucket,
             Key: key,
         };
-        let s3 = new AWS.S3();
+        let s3 = this.createS3Instance(account);
         req = s3.upload(params);
         return { request: req };
     }
@@ -193,10 +217,5 @@ export class S3Service implements IRequestTracked {
             res.splice(res.length - 1, 1);
         }
         return res;
-    }
-
-    private changeCredential(account: string) {
-        let credentials = new AWS.SharedIniFileCredentials({ profile: account });
-        AWS.config.credentials = credentials;
     }
 }

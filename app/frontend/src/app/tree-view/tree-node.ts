@@ -1,6 +1,7 @@
 import { S3Service } from "../aws-s3/services/s3.service";
 import { RequestUploadService } from "../aws-s3/services/request-upload.service";
 import { UploadItem } from "../aws-s3/upload-item";
+import { IAccount } from "../../../../model";
 
 export interface TreeNode {
     name?: string;
@@ -40,8 +41,10 @@ export abstract class S3ActionNode implements TreeNode {
 
 export class AccountNode extends S3ActionNode {
     enumerated = true;
-    constructor(n: string) {
-        super(n, TreeNodeType.Account);
+    private url: string;
+    constructor(acc: IAccount) {
+        super(acc.id, TreeNodeType.Account);
+        this.url = acc.url;
     }
     get path() {
         return this.name;
@@ -49,20 +52,23 @@ export class AccountNode extends S3ActionNode {
     refresh(service: S3Service) {
         if (service) {
             this.busy = true;
-            service.listBuckets(this.name);
+            service.listBuckets({
+                id: this.name,
+                url: this.url,
+            });
         }
     }
 }
 
 export class BucketNode extends S3ActionNode {
-    account = '';
+    account: IAccount;
     enumerated = false;
-    constructor(parent: string, n: string) {
+    constructor(parent: IAccount, n: string) {
         super(n, TreeNodeType.Bucket);
         this.account = parent;
     }
     get path() {
-        return `${this.account}/${this.name}`;
+        return `${this.account.id}/${this.name}`;
     }
     dropAction(service: RequestUploadService, files: UploadItem[]) {
         if (service) {
@@ -79,10 +85,10 @@ export class BucketNode extends S3ActionNode {
 
 export class FolderNode extends S3ActionNode {
     prefix = '';
-    account = '';
+    account: IAccount;
     bucket = '';
     enumerated = false;
-    constructor(account: string, bucket: string, prefix: string, n: string) {
+    constructor(account: IAccount, bucket: string, prefix: string, n: string) {
         super(n, TreeNodeType.Folder);
         this.prefix = prefix;
         this.account = account;
@@ -90,9 +96,9 @@ export class FolderNode extends S3ActionNode {
     }
     get path() {
         if (this.prefix) {
-            return `${this.account}/${this.bucket}/${this.prefix}/${this.name}`;
+            return `${this.account.id}/${this.bucket}/${this.prefix}/${this.name}`;
         }
-        return `${this.account}/${this.bucket}/${this.name}`;
+        return `${this.account.id}/${this.bucket}/${this.name}`;
     }
     dropAction(service: RequestUploadService, files: UploadItem[]) {
         if (service) {
@@ -110,10 +116,10 @@ export class FolderNode extends S3ActionNode {
 }
 
 export class FileNode extends S3ActionNode {
-    account = '';
+    account: IAccount;
     bucket = '';
     key = '';
-    constructor(account: string, bucket: string, key: string, name: string) {
+    constructor(account: IAccount, bucket: string, key: string, name: string) {
         super(name, TreeNodeType.File);
         this.key = key;
         this.account = account;
