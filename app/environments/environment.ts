@@ -1,1 +1,1 @@
-export const GlobalEnv = {"GA_TRACKING_ID":"","VERSION":"0.1.0"};
+export const GlobalEnv = {"GA_TRACKING_ID":"","VERSION":"0.2.0-rc.0"};
