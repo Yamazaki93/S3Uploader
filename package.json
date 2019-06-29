@@ -1,6 +1,6 @@
 {
   "name": "s3uploader",
-  "version": "0.2.0-rc.0",
+  "version": "0.2.0",
   "description": "An UI for AWS S3",
   "displayName": "S3Uploader",
   "author": {
