@@ -87,7 +87,7 @@
     "@types/uuid": "^3.4.4",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "electron": "2.0.8",
+    "electron": "7.2.4",
     "electron-builder": "^20.39.0",
     "electron-chromedriver": "^3.0.0-beta.1",
     "mocha": "^5.2.0",
