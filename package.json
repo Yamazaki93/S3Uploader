@@ -99,7 +99,7 @@
   },
   "dependencies": {
     "aws-sdk": "^2.334.0",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "electron-google-analytics": "^0.1.0",
     "electron-log": "^3.0.1",
     "electron-updater": "^4.0.0",
